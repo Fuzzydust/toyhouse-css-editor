@@ -91,7 +91,7 @@ export default function PropertiesPanel({
 
       {element.type === 'pagedoll' && (
         <div className="mb-4 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded text-sm text-cyan-300">
-          Page dolls scroll with the page content, similar to Toyhou.se character decorations.
+          Page dolls stay at a fixed position on the page and scroll with the content, just like on Toyhou.se. Increase canvas height in Canvas Settings to see the scroll effect.
         </div>
       )}
 
