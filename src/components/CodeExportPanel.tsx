@@ -26,14 +26,15 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
   };
 
   const generateCSS = () => {
-    let css = `.container {\n  position: relative;\n  width: ${project.canvasWidth}px;\n  min-height: ${project.canvasHeight}px;\n  background: ${project.canvasBackground};\n  overflow: auto;\n}\n\n`;
+    let css = `.container {\n  position: relative;\n  width: ${project.canvasWidth}px;\n  min-height: ${project.canvasHeight}px;\n  background: ${project.canvasBackground};\n  overflow: visible;\n}\n\n`;
 
     project.elements.forEach((el, index) => {
       css += `.element-${index + 1} {\n`;
       if (el.type === 'pagedoll') {
-        css += `  position: fixed;\n`;
+        const bottomPos = project.canvasHeight - el.y - el.height;
+        css += `  position: absolute;\n`;
         css += `  right: ${el.x}px;\n`;
-        css += `  bottom: ${el.y}px;\n`;
+        css += `  bottom: ${bottomPos}px;\n`;
         css += `  max-height: ${el.height}px;\n`;
       } else {
         css += `  position: absolute;\n`;
@@ -108,9 +109,10 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
     const styles: string[] = [];
 
     if (el.type === 'pagedoll') {
-      styles.push(`position: fixed`);
+      const bottomPos = project.canvasHeight - el.y - el.height;
+      styles.push(`position: absolute`);
       styles.push(`right: ${el.x}px`);
-      styles.push(`bottom: ${el.y}px`);
+      styles.push(`bottom: ${bottomPos}px`);
       styles.push(`max-height: ${el.height}px`);
     } else {
       styles.push(`position: absolute`);
@@ -181,14 +183,15 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
   };
 
   const generateHTML = () => {
-    const containerStyle = `position: relative; width: ${project.canvasWidth}px; height: ${project.canvasHeight}px; background: ${project.canvasBackground}; overflow: hidden`;
+    const containerStyle = `position: relative; width: ${project.canvasWidth}px; height: ${project.canvasHeight}px; background: ${project.canvasBackground}; overflow: visible`;
 
     let html = `<div style="${containerStyle}">\n`;
 
     project.elements.forEach((el) => {
       if (el.type === 'pagedoll') {
         const bgImage = el.styles?.backgroundImage?.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '') || '';
-        html += `  <img src="${bgImage}" style="max-height: ${el.height}px; position: fixed; right: ${el.x}px; bottom: ${el.y}px; z-index: ${el.zIndex};" class="page-doll">\n`;
+        const bottomPos = project.canvasHeight - el.y - el.height;
+        html += `  <img src="${bgImage}" style="max-height: ${el.height}px; position: absolute; right: ${el.x}px; bottom: ${bottomPos}px; z-index: ${el.zIndex};" class="page-doll">\n`;
         return;
       }
       const inlineStyle = generateInlineStyles(el);
