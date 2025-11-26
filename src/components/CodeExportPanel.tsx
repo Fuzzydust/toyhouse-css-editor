@@ -35,6 +35,7 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
         css += `  right: -1250px;\n`;
         css += `  bottom: -588px;\n`;
         css += `  max-height: -500px;\n`;
+        css += `  z-index: 9999;\n`;
       } else {
         css += `  position: absolute;\n`;
         css += `  left: ${el.x}px;\n`;
@@ -112,6 +113,7 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
       styles.push(`right: -1250px`);
       styles.push(`bottom: -588px`);
       styles.push(`max-height: -500px`);
+      styles.push(`z-index: 9999`);
     } else {
       styles.push(`position: absolute`);
       styles.push(`left: ${el.x}px`);
@@ -207,7 +209,7 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
 
     pagedolls.forEach((el) => {
       const bgImage = el.styles?.backgroundImage?.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '') || '';
-      html += `  <img src="${bgImage}" style="position: fixed; max-height: -500px; right: -1250px; bottom: -588px;" class="page-doll fr-fil fr-dib" width="${el.width}" height="${el.height}">\n`;
+      html += `  <img src="${bgImage}" style="position: fixed; max-height: -500px; right: -1250px; bottom: -588px; z-index: 9999;" class="page-doll fr-fil fr-dib" width="${el.width}" height="${el.height}">\n`;
     });
 
     html += `</div>`;
