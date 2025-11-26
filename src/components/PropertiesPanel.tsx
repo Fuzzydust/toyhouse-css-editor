@@ -1,0 +1,422 @@
+import { Trash2, Settings, Link, X } from 'lucide-react';
+import { CanvasElement } from '../types';
+import { useState } from 'react';
+
+interface PropertiesPanelProps {
+  element: CanvasElement | undefined;
+  onUpdateElement: (id: string, updates: Partial<CanvasElement>) => void;
+  onDeleteElement: (id: string) => void;
+  canvasSettings: {
+    width: number;
+    height: number;
+    background: string;
+  };
+  onUpdateCanvas: (updates: any) => void;
+}
+
+export default function PropertiesPanel({
+  element,
+  onUpdateElement,
+  onDeleteElement,
+  canvasSettings,
+  onUpdateCanvas,
+}: PropertiesPanelProps) {
+  const [showImageLinkPopup, setShowImageLinkPopup] = useState(false);
+  const [imageLink, setImageLink] = useState('');
+
+  if (!element) {
+    return (
+      <div className="p-6 border-b border-slate-700">
+        <div className="flex items-center gap-2 mb-4">
+          <Settings className="w-5 h-5 text-slate-400" />
+          <h3 className="text-lg font-semibold text-white">Canvas Settings</h3>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Width (px)</label>
+            <input
+              type="number"
+              value={canvasSettings.width}
+              onChange={(e) => onUpdateCanvas({ canvasWidth: parseInt(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Height (px)</label>
+            <input
+              type="number"
+              value={canvasSettings.height}
+              onChange={(e) => onUpdateCanvas({ canvasHeight: parseInt(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Background</label>
+            <div className="flex gap-2">
+              <input
+                type="color"
+                value={canvasSettings.background}
+                onChange={(e) => onUpdateCanvas({ canvasBackground: e.target.value })}
+                className="w-12 h-10 rounded cursor-pointer"
+              />
+              <input
+                type="text"
+                value={canvasSettings.background}
+                onChange={(e) => onUpdateCanvas({ canvasBackground: e.target.value })}
+                className="flex-1 px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 border-b border-slate-700">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-white capitalize">
+          {element.type === 'pagedoll' ? 'Page Doll' : element.type} Properties
+        </h3>
+        <button
+          onClick={() => onDeleteElement(element.id)}
+          className="p-2 text-red-400 hover:bg-red-500/10 rounded transition-colors"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      </div>
+
+      {element.type === 'pagedoll' && (
+        <div className="mb-4 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded text-sm text-cyan-300">
+          Page dolls scroll with the page content, similar to Toyhou.se character decorations.
+        </div>
+      )}
+
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">X</label>
+            <input
+              type="number"
+              value={Math.round(element.x)}
+              onChange={(e) => onUpdateElement(element.id, { x: parseInt(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Y</label>
+            <input
+              type="number"
+              value={Math.round(element.y)}
+              onChange={(e) => onUpdateElement(element.id, { y: parseInt(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Width</label>
+            <input
+              type="number"
+              value={Math.round(element.width)}
+              onChange={(e) => onUpdateElement(element.id, { width: parseInt(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Height</label>
+            <input
+              type="number"
+              value={Math.round(element.height)}
+              onChange={(e) => onUpdateElement(element.id, { height: parseInt(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Rotation (deg)</label>
+          <input
+            type="number"
+            value={element.rotation}
+            onChange={(e) => onUpdateElement(element.id, { rotation: parseInt(e.target.value) })}
+            className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Z-Index</label>
+          <input
+            type="number"
+            value={element.zIndex}
+            onChange={(e) => onUpdateElement(element.id, { zIndex: parseInt(e.target.value) })}
+            className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-2">Link</label>
+          <div className="space-y-2">
+            <select
+              value={element.link?.type || ''}
+              onChange={(e) => {
+                if (!e.target.value) {
+                  onUpdateElement(element.id, { link: undefined });
+                } else {
+                  onUpdateElement(element.id, {
+                    link: {
+                      type: e.target.value as 'page' | 'url',
+                      target: '',
+                      openInNewTab: false,
+                    },
+                  });
+                }
+              }}
+              className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+            >
+              <option value="">No Link</option>
+              <option value="page">Link to Page</option>
+              <option value="url">Link to URL</option>
+            </select>
+
+            {element.link && (
+              <>
+                <input
+                  type="text"
+                  value={element.link.target}
+                  onChange={(e) =>
+                    onUpdateElement(element.id, {
+                      link: { ...element.link!, target: e.target.value },
+                    })
+                  }
+                  placeholder={element.link.type === 'page' ? 'Page ID' : 'https://example.com'}
+                  className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
+                />
+                <label className="flex items-center gap-2 text-sm text-slate-300">
+                  <input
+                    type="checkbox"
+                    checked={element.link.openInNewTab || false}
+                    onChange={(e) =>
+                      onUpdateElement(element.id, {
+                        link: { ...element.link!, openInNewTab: e.target.checked },
+                      })
+                    }
+                    className="rounded bg-slate-800 border-slate-600"
+                  />
+                  Open in new tab
+                </label>
+              </>
+            )}
+          </div>
+        </div>
+
+        {element.type === 'text' && (
+          <>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Text Content</label>
+              <textarea
+                value={element.content}
+                onChange={(e) => onUpdateElement(element.id, { content: e.target.value })}
+                className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+                rows={3}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Font Size</label>
+              <input
+                type="number"
+                value={element.fontSize}
+                onChange={(e) => onUpdateElement(element.id, { fontSize: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Font Color</label>
+              <div className="flex gap-2">
+                <input
+                  type="color"
+                  value={element.fontColor}
+                  onChange={(e) => onUpdateElement(element.id, { fontColor: e.target.value })}
+                  className="w-12 h-10 rounded cursor-pointer"
+                />
+                <input
+                  type="text"
+                  value={element.fontColor}
+                  onChange={(e) => onUpdateElement(element.id, { fontColor: e.target.value })}
+                  className="flex-1 px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
+                />
+              </div>
+            </div>
+          </>
+        )}
+
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Background Color</label>
+          <div className="flex gap-2">
+            <input
+              type="color"
+              value={element.styles.backgroundColor || '#ffffff'}
+              onChange={(e) =>
+                onUpdateElement(element.id, {
+                  styles: { ...element.styles, backgroundColor: e.target.value },
+                })
+              }
+              className="w-12 h-10 rounded cursor-pointer"
+            />
+            <input
+              type="text"
+              value={element.styles.backgroundColor || ''}
+              onChange={(e) =>
+                onUpdateElement(element.id, {
+                  styles: { ...element.styles, backgroundColor: e.target.value },
+                })
+              }
+              className="flex-1 px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Border Radius (px)</label>
+          <input
+            type="number"
+            value={element.styles.borderRadius || 0}
+            onChange={(e) =>
+              onUpdateElement(element.id, {
+                styles: { ...element.styles, borderRadius: parseInt(e.target.value) },
+              })
+            }
+            className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Opacity</label>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.1"
+            value={element.styles.opacity || 1}
+            onChange={(e) =>
+              onUpdateElement(element.id, {
+                styles: { ...element.styles, opacity: parseFloat(e.target.value) },
+              })
+            }
+            className="w-full"
+          />
+        </div>
+
+        {(element.type === 'image' || element.type === 'pagedoll' || element.type === 'shape') && (
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">
+              {element.styles?.backgroundImage ? 'Image URL' : 'Add Background Image'}
+            </label>
+            <button
+              onClick={() => {
+                const bgImage = element.styles?.backgroundImage || '';
+                const url = bgImage.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '');
+                setImageLink(url);
+                setShowImageLinkPopup(true);
+              }}
+              className="w-full px-3 py-2 bg-slate-800 text-blue-400 rounded border border-slate-600 hover:bg-slate-700 transition-colors flex items-center gap-2 justify-center"
+            >
+              <Link className="w-4 h-4" />
+              {element.styles?.backgroundImage ? 'View/Edit Image Link' : 'Add Image to Shape'}
+            </button>
+          </div>
+        )}
+
+        {element.type === 'shape' && (
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Blend Mode (Cutout)</label>
+            <select
+              value={element.styles?.mixBlendMode || 'normal'}
+              onChange={(e) =>
+                onUpdateElement(element.id, {
+                  styles: { ...element.styles, mixBlendMode: e.target.value },
+                })
+              }
+              className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+            >
+              <option value="normal">Normal</option>
+              <option value="multiply">Multiply (Darken)</option>
+              <option value="screen">Screen (Lighten)</option>
+              <option value="overlay">Overlay</option>
+              <option value="darken">Darken</option>
+              <option value="lighten">Lighten</option>
+              <option value="color-dodge">Color Dodge</option>
+              <option value="color-burn">Color Burn</option>
+              <option value="hard-light">Hard Light</option>
+              <option value="soft-light">Soft Light</option>
+              <option value="difference">Difference (Cutout)</option>
+              <option value="exclusion">Exclusion (Cutout)</option>
+            </select>
+          </div>
+        )}
+      </div>
+
+      {showImageLinkPopup && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowImageLinkPopup(false)}>
+          <div className="bg-slate-800 rounded-lg p-6 max-w-2xl w-full mx-4 border border-slate-700" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">Image URL</h3>
+              <button
+                onClick={() => setShowImageLinkPopup(false)}
+                className="p-1 text-slate-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Current Image URL</label>
+                <textarea
+                  value={imageLink}
+                  onChange={(e) => setImageLink(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-900 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
+                  rows={4}
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    if (imageLink.trim()) {
+                      onUpdateElement(element.id, {
+                        styles: {
+                          ...element.styles,
+                          backgroundImage: `url(${imageLink})`,
+                          backgroundSize: element.styles?.backgroundSize || 'cover',
+                          backgroundPosition: element.styles?.backgroundPosition || 'center',
+                        },
+                      });
+                    } else {
+                      const { backgroundImage, backgroundSize, backgroundPosition, ...restStyles } = element.styles || {};
+                      onUpdateElement(element.id, {
+                        styles: restStyles,
+                      });
+                    }
+                    setShowImageLinkPopup(false);
+                  }}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                >
+                  {imageLink.trim() ? 'Update Image' : 'Remove Image'}
+                </button>
+                <button
+                  onClick={() => setShowImageLinkPopup(false)}
+                  className="px-4 py-2 bg-slate-700 text-white rounded hover:bg-slate-600 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
