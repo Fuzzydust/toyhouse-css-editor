@@ -1,4 +1,4 @@
-import { Square, Image, Type, Circle, Triangle, Pentagon, Hexagon, Scroll } from 'lucide-react';
+import { Square, Image, Type, Circle, Triangle, Pentagon, Hexagon } from 'lucide-react';
 import { CanvasElement } from '../types';
 
 interface ToolbarProps {
@@ -42,31 +42,6 @@ export default function Toolbar({ onAddElement }: ToolbarProps) {
         backgroundImage: `url(${url})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        opacity: 1,
-      },
-    };
-    onAddElement(element);
-  };
-
-  const createPageDoll = () => {
-    const url = prompt('Enter image URL for page doll:');
-    if (!url) return;
-
-    const element: CanvasElement = {
-      id: `pagedoll-${Date.now()}`,
-      type: 'pagedoll',
-      x: 10,
-      y: 10,
-      width: 200,
-      height: 300,
-      rotation: 0,
-      zIndex: 100,
-      scrollBehavior: 'fixed',
-      styles: {
-        backgroundImage: `url(${url})`,
-        backgroundSize: 'contain',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
         opacity: 1,
       },
     };
@@ -178,7 +153,6 @@ export default function Toolbar({ onAddElement }: ToolbarProps) {
   const tools = [
     { icon: Square, label: 'Div', onClick: createDiv, color: 'from-blue-500 to-blue-600' },
     { icon: Image, label: 'Image', onClick: createImage, color: 'from-rose-500 to-rose-600' },
-    { icon: Scroll, label: 'Page Doll', onClick: createPageDoll, color: 'from-cyan-500 to-cyan-600' },
     { icon: Type, label: 'Text', onClick: createText, color: 'from-green-500 to-green-600' },
     { icon: Circle, label: 'Circle', onClick: createCircle, color: 'from-red-500 to-red-600' },
     { icon: Square, label: 'Rectangle', onClick: createRectangle, color: 'from-violet-500 to-violet-600' },

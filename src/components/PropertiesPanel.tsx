@@ -78,9 +78,7 @@ export default function PropertiesPanel({
   return (
     <div className="p-6 border-b border-slate-700">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-white capitalize">
-          {element.type === 'pagedoll' ? 'Page Doll' : element.type} Properties
-        </h3>
+        <h3 className="text-lg font-semibold text-white capitalize">{element.type} Properties</h3>
         <button
           onClick={() => onDeleteElement(element.id)}
           className="p-2 text-red-400 hover:bg-red-500/10 rounded transition-colors"
@@ -88,12 +86,6 @@ export default function PropertiesPanel({
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
-
-      {element.type === 'pagedoll' && (
-        <div className="mb-4 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded text-sm text-cyan-300">
-          Page dolls stay fixed to the browser viewport (bottom-right position), just like on Toyhou.se. X = right offset, Y = bottom offset.
-        </div>
-      )}
 
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
@@ -311,7 +303,7 @@ export default function PropertiesPanel({
           />
         </div>
 
-        {(element.type === 'image' || element.type === 'pagedoll' || element.type === 'shape') && (
+        {(element.type === 'image' || element.type === 'shape') && (
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1">
               {element.styles?.backgroundImage ? 'Image URL' : 'Add Background Image'}

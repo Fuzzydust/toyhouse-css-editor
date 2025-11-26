@@ -11,7 +11,7 @@ function App() {
   const [project, setProject] = useState<Project>({
     name: 'Untitled Project',
     canvasWidth: 800,
-    canvasHeight: 1200,
+    canvasHeight: 600,
     canvasBackground: '#ffffff',
     elements: [],
     pages: [],
@@ -79,7 +79,7 @@ function App() {
       id: Date.now().toString(),
       name: `Page ${(project.pages?.length || 0) + 1}`,
       canvasWidth: 800,
-      canvasHeight: 1200,
+      canvasHeight: 600,
       canvasBackground: '#ffffff',
       elements: [],
     };
