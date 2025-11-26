@@ -207,7 +207,7 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
 
     pagedolls.forEach((el) => {
       const bgImage = el.styles?.backgroundImage?.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '') || '';
-      html += `  <img src="${bgImage}" style="max-height: ${el.height}px; position: absolute; right: ${el.x}px; bottom: ${el.y}px; z-index: ${el.zIndex};" class="page-doll">\n`;
+      html += `  <img src="${bgImage}" style="max-height: ${el.height}px; right: ${el.x}px; bottom: ${el.y}px;" class="page-doll fr-fil fr-dib" width="${el.width}" height="${el.height}">\n`;
     });
 
     html += `</div>`;
