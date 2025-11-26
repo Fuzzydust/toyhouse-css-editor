@@ -32,9 +32,9 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
       css += `.element-${index + 1} {\n`;
       if (el.type === 'pagedoll') {
         css += `  position: absolute;\n`;
-        css += `  right: ${el.x}px;\n`;
-        css += `  bottom: ${el.y}px;\n`;
-        css += `  max-height: ${el.height}px;\n`;
+        css += `  right: -1250px;\n`;
+        css += `  bottom: -588px;\n`;
+        css += `  max-height: -500px;\n`;
       } else {
         css += `  position: absolute;\n`;
         css += `  left: ${el.x}px;\n`;
@@ -109,9 +109,9 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
 
     if (el.type === 'pagedoll') {
       styles.push(`position: absolute`);
-      styles.push(`right: ${el.x}px`);
-      styles.push(`bottom: ${el.y}px`);
-      styles.push(`max-height: ${el.height}px`);
+      styles.push(`right: -1250px`);
+      styles.push(`bottom: -588px`);
+      styles.push(`max-height: -500px`);
     } else {
       styles.push(`position: absolute`);
       styles.push(`left: ${el.x}px`);
@@ -207,7 +207,7 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
 
     pagedolls.forEach((el) => {
       const bgImage = el.styles?.backgroundImage?.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '') || '';
-      html += `  <img src="${bgImage}" style="max-height: ${el.height}px; right: ${el.x}px; bottom: ${el.y}px;" class="page-doll fr-fil fr-dib" width="${el.width}" height="${el.height}">\n`;
+      html += `  <img src="${bgImage}" style="max-height: -500px; right: -1250px; bottom: -588px;" class="page-doll fr-fil fr-dib" width="${el.width}" height="${el.height}">\n`;
     });
 
     html += `</div>`;
