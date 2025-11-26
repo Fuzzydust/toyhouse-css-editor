@@ -31,7 +31,7 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
     project.elements.forEach((el, index) => {
       css += `.element-${index + 1} {\n`;
       if (el.type === 'pagedoll') {
-        css += `  position: absolute;\n`;
+        css += `  position: fixed;\n`;
         css += `  right: -1250px;\n`;
         css += `  bottom: -588px;\n`;
         css += `  max-height: -500px;\n`;
@@ -108,7 +108,7 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
     const styles: string[] = [];
 
     if (el.type === 'pagedoll') {
-      styles.push(`position: absolute`);
+      styles.push(`position: fixed`);
       styles.push(`right: -1250px`);
       styles.push(`bottom: -588px`);
       styles.push(`max-height: -500px`);
@@ -207,7 +207,7 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
 
     pagedolls.forEach((el) => {
       const bgImage = el.styles?.backgroundImage?.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '') || '';
-      html += `  <img src="${bgImage}" style="max-height: -500px; right: -1250px; bottom: -588px;" class="page-doll fr-fil fr-dib" width="${el.width}" height="${el.height}">\n`;
+      html += `  <img src="${bgImage}" style="position: fixed; max-height: -500px; right: -1250px; bottom: -588px;" class="page-doll fr-fil fr-dib" width="${el.width}" height="${el.height}">\n`;
     });
 
     html += `</div>`;
