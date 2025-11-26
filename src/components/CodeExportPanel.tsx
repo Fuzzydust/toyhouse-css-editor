@@ -31,10 +31,9 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
     project.elements.forEach((el, index) => {
       css += `.element-${index + 1} {\n`;
       if (el.type === 'pagedoll') {
-        const bottomPos = project.canvasHeight - el.y - el.height;
         css += `  position: absolute;\n`;
         css += `  right: ${el.x}px;\n`;
-        css += `  bottom: ${bottomPos}px;\n`;
+        css += `  bottom: ${el.y}px;\n`;
         css += `  max-height: ${el.height}px;\n`;
       } else {
         css += `  position: absolute;\n`;
@@ -109,10 +108,9 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
     const styles: string[] = [];
 
     if (el.type === 'pagedoll') {
-      const bottomPos = project.canvasHeight - el.y - el.height;
       styles.push(`position: absolute`);
       styles.push(`right: ${el.x}px`);
-      styles.push(`bottom: ${bottomPos}px`);
+      styles.push(`bottom: ${el.y}px`);
       styles.push(`max-height: ${el.height}px`);
     } else {
       styles.push(`position: absolute`);
@@ -183,23 +181,33 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
   };
 
   const generateHTML = () => {
-    const containerStyle = `position: relative; width: ${project.canvasWidth}px; height: ${project.canvasHeight}px; background: ${project.canvasBackground}; overflow: visible`;
+    const containerStyle = `position: relative; width: ${project.canvasWidth}px; min-height: ${project.canvasHeight}px; background: ${project.canvasBackground}; overflow: visible`;
 
     let html = `<div style="${containerStyle}">\n`;
 
+    const pagedolls: any[] = [];
+    const regularElements: any[] = [];
+
     project.elements.forEach((el) => {
       if (el.type === 'pagedoll') {
-        const bgImage = el.styles?.backgroundImage?.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '') || '';
-        const bottomPos = project.canvasHeight - el.y - el.height;
-        html += `  <img src="${bgImage}" style="max-height: ${el.height}px; position: absolute; right: ${el.x}px; bottom: ${bottomPos}px; z-index: ${el.zIndex};" class="page-doll">\n`;
-        return;
+        pagedolls.push(el);
+      } else {
+        regularElements.push(el);
       }
+    });
+
+    regularElements.forEach((el) => {
       const inlineStyle = generateInlineStyles(el);
       html += `  <div style="${inlineStyle}">`;
       if (el.type === 'text') {
         html += el.content || 'Text';
       }
       html += `</div>\n`;
+    });
+
+    pagedolls.forEach((el) => {
+      const bgImage = el.styles?.backgroundImage?.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '') || '';
+      html += `  <img src="${bgImage}" style="max-height: ${el.height}px; position: absolute; right: ${el.x}px; bottom: ${el.y}px; z-index: ${el.zIndex};" class="page-doll">\n`;
     });
 
     html += `</div>`;
