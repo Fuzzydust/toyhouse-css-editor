@@ -21,7 +21,7 @@ export interface ImageStyles {
 
 export interface CanvasElement {
   id: string;
-  type: 'div' | 'image' | 'text' | 'shape';
+  type: 'div' | 'image' | 'text' | 'shape' | 'pagedoll';
   x: number;
   y: number;
   width: number;
@@ -31,6 +31,7 @@ export interface CanvasElement {
   visible?: boolean;
   locked?: boolean;
   name?: string;
+  scrollBehavior?: 'fixed' | 'absolute';
   link?: {
     type: 'page' | 'url';
     target: string;
