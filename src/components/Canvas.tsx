@@ -133,7 +133,7 @@ export default function Canvas({
     const isLocked = element.locked === true;
 
     const style: React.CSSProperties = {
-      position: element.type === 'pagedoll' ? 'fixed' : 'absolute',
+      position: 'absolute',
       left: element.x,
       top: element.y,
       width: element.width,
