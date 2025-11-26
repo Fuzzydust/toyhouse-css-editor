@@ -259,7 +259,7 @@ export default function PropertiesPanel({
           <div className="flex gap-2">
             <input
               type="color"
-              value={element.styles.backgroundColor || '#ffffff'}
+              value={element.styles?.backgroundColor || '#ffffff'}
               onChange={(e) =>
                 onUpdateElement(element.id, {
                   styles: { ...element.styles, backgroundColor: e.target.value },
@@ -269,7 +269,7 @@ export default function PropertiesPanel({
             />
             <input
               type="text"
-              value={element.styles.backgroundColor || ''}
+              value={element.styles?.backgroundColor || ''}
               onChange={(e) =>
                 onUpdateElement(element.id, {
                   styles: { ...element.styles, backgroundColor: e.target.value },
@@ -284,7 +284,7 @@ export default function PropertiesPanel({
           <label className="block text-sm font-medium text-slate-300 mb-1">Border Radius (px)</label>
           <input
             type="number"
-            value={element.styles.borderRadius || 0}
+            value={element.styles?.borderRadius || 0}
             onChange={(e) =>
               onUpdateElement(element.id, {
                 styles: { ...element.styles, borderRadius: parseInt(e.target.value) },
@@ -301,7 +301,7 @@ export default function PropertiesPanel({
             min="0"
             max="1"
             step="0.1"
-            value={element.styles.opacity || 1}
+            value={element.styles?.opacity || 1}
             onChange={(e) =>
               onUpdateElement(element.id, {
                 styles: { ...element.styles, opacity: parseFloat(e.target.value) },

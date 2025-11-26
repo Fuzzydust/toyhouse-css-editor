@@ -1,4 +1,4 @@
-import { Square, Image, Type, Circle, Triangle, Pentagon, Hexagon, Scroll } from 'lucide-react';
+import { Square, Image, Type, Circle, Triangle, Hexagon, Scroll } from 'lucide-react';
 import { CanvasElement } from '../types';
 
 interface ToolbarProps {
@@ -183,7 +183,6 @@ export default function Toolbar({ onAddElement }: ToolbarProps) {
     { icon: Circle, label: 'Circle', onClick: createCircle, color: 'from-red-500 to-red-600' },
     { icon: Square, label: 'Rectangle', onClick: createRectangle, color: 'from-violet-500 to-violet-600' },
     { icon: Triangle, label: 'Triangle', onClick: createTriangle, color: 'from-emerald-500 to-emerald-600' },
-    { icon: Pentagon, label: 'Pentagon', onClick: () => createPolygon(5), color: 'from-amber-500 to-amber-600' },
     { icon: Hexagon, label: 'Hexagon', onClick: () => createPolygon(6), color: 'from-orange-500 to-orange-600' },
   ];
 

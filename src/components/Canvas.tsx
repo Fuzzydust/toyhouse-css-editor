@@ -142,11 +142,8 @@ export default function Canvas({
       cursor: isLocked ? 'not-allowed' : 'move',
       pointerEvents: 'auto',
       ...element.styles,
+      mixBlendMode: element.styles?.mixBlendMode as any,
     };
-
-    if (element.styles?.mixBlendMode) {
-      style.mixBlendMode = element.styles.mixBlendMode as any;
-    }
 
     if (element.type === 'text') {
       style.display = 'flex';
