@@ -30,11 +30,18 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
 
     project.elements.forEach((el, index) => {
       css += `.element-${index + 1} {\n`;
-      css += `  position: absolute;\n`;
-      css += `  left: ${el.x}px;\n`;
-      css += `  top: ${el.y}px;\n`;
-      css += `  width: ${el.width}px;\n`;
-      css += `  height: ${el.height}px;\n`;
+      if (el.type === 'pagedoll') {
+        css += `  position: fixed;\n`;
+        css += `  right: ${el.x}px;\n`;
+        css += `  bottom: ${el.y}px;\n`;
+        css += `  max-height: ${el.height}px;\n`;
+      } else {
+        css += `  position: absolute;\n`;
+        css += `  left: ${el.x}px;\n`;
+        css += `  top: ${el.y}px;\n`;
+        css += `  width: ${el.width}px;\n`;
+        css += `  height: ${el.height}px;\n`;
+      }
 
       if (el.rotation !== 0) {
         css += `  transform: rotate(${el.rotation}deg);\n`;
@@ -100,11 +107,18 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
   const generateInlineStyles = (el: any): string => {
     const styles: string[] = [];
 
-    styles.push(`position: absolute`);
-    styles.push(`left: ${el.x}px`);
-    styles.push(`top: ${el.y}px`);
-    styles.push(`width: ${el.width}px`);
-    styles.push(`height: ${el.height}px`);
+    if (el.type === 'pagedoll') {
+      styles.push(`position: fixed`);
+      styles.push(`right: ${el.x}px`);
+      styles.push(`bottom: ${el.y}px`);
+      styles.push(`max-height: ${el.height}px`);
+    } else {
+      styles.push(`position: absolute`);
+      styles.push(`left: ${el.x}px`);
+      styles.push(`top: ${el.y}px`);
+      styles.push(`width: ${el.width}px`);
+      styles.push(`height: ${el.height}px`);
+    }
 
     if (el.rotation !== 0) {
       styles.push(`transform: rotate(${el.rotation}deg)`);
@@ -172,6 +186,11 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
     let html = `<div style="${containerStyle}">\n`;
 
     project.elements.forEach((el) => {
+      if (el.type === 'pagedoll') {
+        const bgImage = el.styles?.backgroundImage?.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '') || '';
+        html += `  <img src="${bgImage}" style="max-height: ${el.height}px; position: fixed; right: ${el.x}px; bottom: ${el.y}px; z-index: ${el.zIndex};" class="page-doll">\n`;
+        return;
+      }
       const inlineStyle = generateInlineStyles(el);
       html += `  <div style="${inlineStyle}">`;
       if (el.type === 'text') {

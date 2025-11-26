@@ -55,13 +55,13 @@ export default function Toolbar({ onAddElement }: ToolbarProps) {
     const element: CanvasElement = {
       id: `pagedoll-${Date.now()}`,
       type: 'pagedoll',
-      x: 50,
-      y: 100,
+      x: 10,
+      y: 10,
       width: 200,
       height: 300,
       rotation: 0,
-      zIndex: 1000,
-      scrollBehavior: 'absolute',
+      zIndex: 100,
+      scrollBehavior: 'fixed',
       styles: {
         backgroundImage: `url(${url})`,
         backgroundSize: 'contain',

@@ -133,14 +133,14 @@ export default function Canvas({
     const isLocked = element.locked === true;
 
     const style: React.CSSProperties = {
-      position: element.type === 'pagedoll' ? 'absolute' : 'absolute',
+      position: element.type === 'pagedoll' ? 'fixed' : 'absolute',
       left: element.x,
       top: element.y,
       width: element.width,
       height: element.height,
       transform: `rotate(${element.rotation}deg)`,
       cursor: isLocked ? 'not-allowed' : 'move',
-      pointerEvents: element.type === 'pagedoll' ? 'auto' : 'auto',
+      pointerEvents: 'auto',
       ...element.styles,
     };
 
