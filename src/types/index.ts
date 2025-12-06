@@ -71,6 +71,13 @@ export interface Page {
   elements: CanvasElement[];
 }
 
+export interface CustomFont {
+  id: string;
+  name: string;
+  url: string;
+  type: 'google' | 'custom';
+}
+
 export interface Project {
   name: string;
   canvasWidth: number;
@@ -79,4 +86,5 @@ export interface Project {
   elements: CanvasElement[];
   pages?: Page[];
   currentPageId?: string;
+  customFonts?: CustomFont[];
 }

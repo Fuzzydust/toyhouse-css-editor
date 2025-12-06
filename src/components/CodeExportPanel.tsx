@@ -26,7 +26,16 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
   };
 
   const generateCSS = () => {
-    let css = `.container {\n  position: relative;\n  width: ${project.canvasWidth}px;\n  min-height: ${project.canvasHeight}px;\n  background: ${project.canvasBackground};\n  overflow: visible;\n}\n\n`;
+    let css = '';
+
+    if (project.customFonts && project.customFonts.length > 0) {
+      project.customFonts.forEach((font) => {
+        css += `@import url('${font.url}');\n`;
+      });
+      css += '\n';
+    }
+
+    css += `.container {\n  position: relative;\n  width: ${project.canvasWidth}px;\n  min-height: ${project.canvasHeight}px;\n  background: ${project.canvasBackground};\n  overflow: visible;\n}\n\n`;
 
     project.elements.forEach((el, index) => {
       css += `.element-${index + 1} {\n`;
@@ -183,7 +192,20 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
   const generateHTML = () => {
     const containerStyle = `position: relative; width: ${project.canvasWidth}px; min-height: ${project.canvasHeight}px; background: ${project.canvasBackground}; overflow: visible`;
 
-    let html = `<div style="${containerStyle}">\n`;
+    let html = '';
+
+    if (project.customFonts && project.customFonts.length > 0) {
+      project.customFonts.forEach((font) => {
+        if (font.type === 'google') {
+          html += `<link href="${font.url}" rel="stylesheet">\n`;
+        } else {
+          html += `<style>@import url('${font.url}');</style>\n`;
+        }
+      });
+      html += '\n';
+    }
+
+    html += `<div style="${containerStyle}">\n`;
 
     const pagedolls: any[] = [];
     const regularElements: any[] = [];

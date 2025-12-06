@@ -1,6 +1,7 @@
 import { Trash2, Settings, Link, X } from 'lucide-react';
-import { CanvasElement } from '../types';
+import { CanvasElement, CustomFont } from '../types';
 import { useState } from 'react';
+import FontsPanel from './FontsPanel';
 
 interface PropertiesPanelProps {
   element: CanvasElement | undefined;
@@ -12,6 +13,9 @@ interface PropertiesPanelProps {
     background: string;
   };
   onUpdateCanvas: (updates: any) => void;
+  customFonts: CustomFont[];
+  onAddFont: (font: CustomFont) => void;
+  onRemoveFont: (fontId: string) => void;
 }
 
 export default function PropertiesPanel({
@@ -20,6 +24,9 @@ export default function PropertiesPanel({
   onDeleteElement,
   canvasSettings,
   onUpdateCanvas,
+  customFonts,
+  onAddFont,
+  onRemoveFont,
 }: PropertiesPanelProps) {
   const [showImageLinkPopup, setShowImageLinkPopup] = useState(false);
   const [imageLink, setImageLink] = useState('');
@@ -226,6 +233,27 @@ export default function PropertiesPanel({
               />
             </div>
             <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Font Family</label>
+              <select
+                value={element.fontFamily || 'Arial'}
+                onChange={(e) => onUpdateElement(element.id, { fontFamily: e.target.value })}
+                className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+              >
+                <option value="Arial">Arial</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Verdana">Verdana</option>
+                <option value="monospace">Monospace</option>
+                {customFonts && customFonts.map((font) => (
+                  <option key={font.id} value={font.name}>
+                    {font.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
               <label className="block text-sm font-medium text-slate-300 mb-1">Font Size</label>
               <input
                 type="number"
@@ -417,6 +445,12 @@ export default function PropertiesPanel({
           </div>
         </div>
       )}
+
+      <FontsPanel
+        customFonts={customFonts}
+        onAddFont={onAddFont}
+        onRemoveFont={onRemoveFont}
+      />
     </div>
   );
 }

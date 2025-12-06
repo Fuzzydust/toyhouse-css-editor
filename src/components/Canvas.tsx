@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Project, CanvasElement } from '../types';
 
 interface CanvasProps {
@@ -39,6 +39,40 @@ export default function Canvas({
     centerX: number;
     centerY: number;
   } | null>(null);
+
+  useEffect(() => {
+    if (!project.customFonts || project.customFonts.length === 0) return;
+
+    const loadedFonts = new Set<string>();
+
+    project.customFonts.forEach((font) => {
+      if (loadedFonts.has(font.id)) return;
+
+      if (font.type === 'google') {
+        const link = document.createElement('link');
+        link.href = font.url;
+        link.rel = 'stylesheet';
+        link.id = `custom-font-${font.id}`;
+        document.head.appendChild(link);
+        loadedFonts.add(font.id);
+      } else if (font.type === 'custom') {
+        const style = document.createElement('style');
+        style.id = `custom-font-${font.id}`;
+        style.textContent = `@import url('${font.url}');`;
+        document.head.appendChild(style);
+        loadedFonts.add(font.id);
+      }
+    });
+
+    return () => {
+      project.customFonts?.forEach((font) => {
+        const element = document.getElementById(`custom-font-${font.id}`);
+        if (element) {
+          element.remove();
+        }
+      });
+    };
+  }, [project.customFonts]);
 
   const handleElementClick = (e: React.MouseEvent, element: CanvasElement) => {
     e.stopPropagation();

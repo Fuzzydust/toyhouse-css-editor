@@ -5,7 +5,7 @@ import Toolbar from './components/Toolbar';
 import PropertiesPanel from './components/PropertiesPanel';
 import CodeExportPanel from './components/CodeExportPanel';
 import LayersPanel from './components/LayersPanel';
-import { CanvasElement, Project, Page } from './types';
+import { CanvasElement, Project, Page, CustomFont } from './types';
 
 function App() {
   const [project, setProject] = useState<Project>({
@@ -16,6 +16,7 @@ function App() {
     elements: [],
     pages: [],
     currentPageId: undefined,
+    customFonts: [],
   });
 
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
@@ -98,6 +99,20 @@ function App() {
     setSelectedElementId(null);
   };
 
+  const addCustomFont = (font: CustomFont) => {
+    setProject((prev) => ({
+      ...prev,
+      customFonts: [...(prev.customFonts || []), font],
+    }));
+  };
+
+  const removeCustomFont = (fontId: string) => {
+    setProject((prev) => ({
+      ...prev,
+      customFonts: (prev.customFonts || []).filter((f) => f.id !== fontId),
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
       <Header
@@ -139,6 +154,9 @@ function App() {
               background: project.canvasBackground,
             }}
             onUpdateCanvas={updateCanvasSettings}
+            customFonts={project.customFonts || []}
+            onAddFont={addCustomFont}
+            onRemoveFont={removeCustomFont}
           />
           <CodeExportPanel project={project} />
         </div>
