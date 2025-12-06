@@ -45,15 +45,40 @@ export default function Canvas({
     vertical: boolean;
   }>({ horizontal: false, vertical: false });
 
+  const [editingTextId, setEditingTextId] = useState<string | null>(null);
+
   const handleElementClick = (e: React.MouseEvent, element: CanvasElement) => {
     e.stopPropagation();
     if (element.locked) return;
     onSelectElement(element.id);
   };
 
+  const handleDoubleClick = (e: React.MouseEvent, element: CanvasElement) => {
+    e.stopPropagation();
+    if (element.locked || element.type !== 'text') return;
+    setEditingTextId(element.id);
+  };
+
+  const handleTextChange = (id: string, newContent: string) => {
+    onUpdateElement(id, { content: newContent });
+  };
+
+  const handleTextBlur = () => {
+    setEditingTextId(null);
+  };
+
+  const handleTextKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      setEditingTextId(null);
+    } else if (e.key === 'Escape') {
+      setEditingTextId(null);
+    }
+  };
+
   const handleMouseDown = (e: React.MouseEvent, element: CanvasElement) => {
     e.stopPropagation();
-    if (element.locked) return;
+    if (element.locked || editingTextId === element.id) return;
 
     const target = e.target as HTMLElement;
     if (target.classList.contains('rotate-handle') || target.closest('.rotate-handle')) {
@@ -200,7 +225,30 @@ export default function Canvas({
       style.clipPath = createPolygonClipPath(element.sides);
     }
 
-    const content = element.type === 'text' ? (element.content || 'Text') : null;
+    const isEditing = editingTextId === element.id;
+
+    const content = element.type === 'text' ? (
+      isEditing ? (
+        <input
+          type="text"
+          value={element.content || 'Text'}
+          onChange={(e) => handleTextChange(element.id, e.target.value)}
+          onBlur={handleTextBlur}
+          onKeyDown={handleTextKeyDown}
+          autoFocus
+          className="w-full h-full bg-transparent outline-none text-center"
+          style={{
+            fontSize: element.fontSize,
+            color: element.fontColor,
+            fontFamily: element.fontFamily,
+            textAlign: element.textAlign as any,
+          }}
+          onClick={(e) => e.stopPropagation()}
+        />
+      ) : (
+        element.content || 'Text'
+      )
+    ) : null;
 
     const elementContent = (
       <>
@@ -239,6 +287,7 @@ export default function Canvas({
         key={element.id}
         style={style}
         onClick={(e) => handleElementClick(e, element)}
+        onDoubleClick={(e) => handleDoubleClick(e, element)}
         onMouseDown={(e) => handleMouseDown(e, element)}
         className={`${isSelected ? 'ring-2 ring-blue-500' : ''} ${element.link ? 'cursor-pointer hover:opacity-80' : ''}`}
       >
