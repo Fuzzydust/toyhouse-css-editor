@@ -1,7 +1,6 @@
 import { Trash2, Settings, Link, X } from 'lucide-react';
-import { CanvasElement, CustomFont } from '../types';
+import { CanvasElement } from '../types';
 import { useState } from 'react';
-import FontsPanel from './FontsPanel';
 
 interface PropertiesPanelProps {
   element: CanvasElement | undefined;
@@ -13,10 +12,28 @@ interface PropertiesPanelProps {
     background: string;
   };
   onUpdateCanvas: (updates: any) => void;
-  customFonts: CustomFont[];
-  onAddFont: (font: CustomFont) => void;
-  onRemoveFont: (fontId: string) => void;
 }
+
+const TOYHOUSE_FONTS = [
+  { name: 'Arial', value: 'Arial, sans-serif' },
+  { name: 'Helvetica', value: 'Helvetica, sans-serif' },
+  { name: 'Times New Roman', value: '"Times New Roman", Times, serif' },
+  { name: 'Georgia', value: 'Georgia, serif' },
+  { name: 'Courier New', value: '"Courier New", Courier, monospace' },
+  { name: 'Verdana', value: 'Verdana, sans-serif' },
+  { name: 'Trebuchet MS', value: '"Trebuchet MS", sans-serif' },
+  { name: 'Comic Sans MS', value: '"Comic Sans MS", cursive' },
+  { name: 'Impact', value: 'Impact, sans-serif' },
+  { name: 'Lucida Console', value: '"Lucida Console", monospace' },
+  { name: 'Tahoma', value: 'Tahoma, sans-serif' },
+  { name: 'Palatino', value: '"Palatino Linotype", "Book Antiqua", Palatino, serif' },
+  { name: 'Garamond', value: 'Garamond, serif' },
+  { name: 'Bookman', value: '"Bookman Old Style", serif' },
+  { name: 'Arial Black', value: '"Arial Black", sans-serif' },
+  { name: 'Monospace', value: 'monospace' },
+  { name: 'Cursive', value: 'cursive' },
+  { name: 'Fantasy', value: 'fantasy' },
+];
 
 export default function PropertiesPanel({
   element,
@@ -24,9 +41,6 @@ export default function PropertiesPanel({
   onDeleteElement,
   canvasSettings,
   onUpdateCanvas,
-  customFonts,
-  onAddFont,
-  onRemoveFont,
 }: PropertiesPanelProps) {
   const [showImageLinkPopup, setShowImageLinkPopup] = useState(false);
   const [imageLink, setImageLink] = useState('');
@@ -235,19 +249,12 @@ export default function PropertiesPanel({
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1">Font Family</label>
               <select
-                value={element.fontFamily || 'Arial'}
+                value={element.fontFamily || 'Arial, sans-serif'}
                 onChange={(e) => onUpdateElement(element.id, { fontFamily: e.target.value })}
                 className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
               >
-                <option value="Arial">Arial</option>
-                <option value="Helvetica">Helvetica</option>
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Georgia">Georgia</option>
-                <option value="Courier New">Courier New</option>
-                <option value="Verdana">Verdana</option>
-                <option value="monospace">Monospace</option>
-                {customFonts && customFonts.map((font) => (
-                  <option key={font.id} value={font.name}>
+                {TOYHOUSE_FONTS.map((font) => (
+                  <option key={font.value} value={font.value}>
                     {font.name}
                   </option>
                 ))}
@@ -445,12 +452,6 @@ export default function PropertiesPanel({
           </div>
         </div>
       )}
-
-      <FontsPanel
-        customFonts={customFonts}
-        onAddFont={onAddFont}
-        onRemoveFont={onRemoveFont}
-      />
     </div>
   );
 }
