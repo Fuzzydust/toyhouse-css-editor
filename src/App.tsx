@@ -98,10 +98,14 @@ function App() {
   };
 
   const addElement = (element: CanvasElement) => {
-    setProject((prev) => ({
-      ...prev,
-      elements: [...prev.elements, element],
-    }));
+    setProject((prev) => {
+      const maxZIndex = prev.elements.reduce((max, el) => Math.max(max, el.zIndex), 0);
+      const newElement = { ...element, zIndex: maxZIndex + 1 };
+      return {
+        ...prev,
+        elements: [...prev.elements, newElement],
+      };
+    });
     setSelectedElementId(element.id);
   };
 
