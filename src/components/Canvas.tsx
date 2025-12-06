@@ -40,6 +40,11 @@ export default function Canvas({
     centerY: number;
   } | null>(null);
 
+  const [snapGuides, setSnapGuides] = useState<{
+    horizontal: boolean;
+    vertical: boolean;
+  }>({ horizontal: false, vertical: false });
+
   const handleElementClick = (e: React.MouseEvent, element: CanvasElement) => {
     e.stopPropagation();
     if (element.locked) return;
@@ -89,9 +94,40 @@ export default function Canvas({
     if (dragging) {
       const deltaX = e.clientX - dragging.startX;
       const deltaY = e.clientY - dragging.startY;
+
+      const element = project.elements.find(el => el.id === dragging.id);
+      if (!element) return;
+
+      const canvasWidth = project.canvasWidth;
+      const canvasHeight = project.canvasHeight;
+      const snapThreshold = 10;
+
+      let newX = dragging.elementX + deltaX;
+      let newY = dragging.elementY + deltaY;
+
+      const elementCenterX = newX + element.width / 2;
+      const elementCenterY = newY + element.height / 2;
+      const canvasCenterX = canvasWidth / 2;
+      const canvasCenterY = canvasHeight / 2;
+
+      let snappedVertical = false;
+      let snappedHorizontal = false;
+
+      if (Math.abs(elementCenterX - canvasCenterX) < snapThreshold) {
+        newX = canvasCenterX - element.width / 2;
+        snappedVertical = true;
+      }
+
+      if (Math.abs(elementCenterY - canvasCenterY) < snapThreshold) {
+        newY = canvasCenterY - element.height / 2;
+        snappedHorizontal = true;
+      }
+
+      setSnapGuides({ vertical: snappedVertical, horizontal: snappedHorizontal });
+
       onUpdateElement(dragging.id, {
-        x: dragging.elementX + deltaX,
-        y: dragging.elementY + deltaY,
+        x: newX,
+        y: newY,
       });
     } else if (resizing) {
       const deltaX = e.clientX - resizing.startX;
@@ -124,6 +160,7 @@ export default function Canvas({
     setDragging(null);
     setResizing(null);
     setRotating(null);
+    setSnapGuides({ horizontal: false, vertical: false });
   };
 
   const renderElement = (element: CanvasElement) => {
@@ -240,6 +277,18 @@ export default function Canvas({
         onMouseLeave={handleMouseUp}
         onClick={() => onSelectElement(null)}
       >
+        {snapGuides.vertical && (
+          <div
+            className="absolute top-0 bottom-0 w-0.5 bg-blue-400 pointer-events-none z-50"
+            style={{ left: project.canvasWidth / 2 }}
+          />
+        )}
+        {snapGuides.horizontal && (
+          <div
+            className="absolute left-0 right-0 h-0.5 bg-blue-400 pointer-events-none z-50"
+            style={{ top: project.canvasHeight / 2 }}
+          />
+        )}
         {project.elements.map(renderElement)}
       </div>
     </div>
