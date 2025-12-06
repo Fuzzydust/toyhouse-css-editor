@@ -424,21 +424,34 @@ export default function PropertiesPanel({
                       min="0"
                       max="100"
                       step="1"
-                      value={
-                        typeof element.styles?.backgroundPosition === 'string' &&
-                        element.styles.backgroundPosition.includes('%')
-                          ? parseInt(element.styles.backgroundPosition.split(' ')[0])
-                          : 50
-                      }
+                      value={(() => {
+                        const pos = element.styles?.backgroundPosition || 'center';
+                        if (typeof pos === 'string' && pos.includes('%')) {
+                          return parseInt(pos.split(' ')[0]);
+                        }
+                        const keywordMap: Record<string, number> = {
+                          'left': 0, 'center': 50, 'right': 100,
+                          'top left': 0, 'top': 50, 'top right': 100,
+                          'bottom left': 0, 'bottom': 50, 'bottom right': 100
+                        };
+                        return keywordMap[pos] ?? 50;
+                      })()}
                       onChange={(e) => {
                         const xVal = e.target.value;
                         const currentPos = element.styles?.backgroundPosition || 'center';
-                        const yVal =
-                          typeof currentPos === 'string' && currentPos.includes('%')
-                            ? currentPos.split(' ')[1] || '50%'
-                            : '50%';
+                        let yVal = '50';
+                        if (typeof currentPos === 'string' && currentPos.includes('%')) {
+                          yVal = currentPos.split(' ')[1]?.replace('%', '') || '50';
+                        } else if (typeof currentPos === 'string') {
+                          const keywordMap: Record<string, number> = {
+                            'top': 0, 'top left': 0, 'top right': 0,
+                            'center': 50, 'left': 50, 'right': 50,
+                            'bottom': 100, 'bottom left': 100, 'bottom right': 100
+                          };
+                          yVal = String(keywordMap[currentPos] ?? 50);
+                        }
                         onUpdateElement(element.id, {
-                          styles: { ...element.styles, backgroundPosition: `${xVal}% ${yVal}` },
+                          styles: { ...element.styles, backgroundPosition: `${xVal}% ${yVal}%` },
                         });
                       }}
                       className="flex-1"
@@ -448,21 +461,34 @@ export default function PropertiesPanel({
                       type="number"
                       min="0"
                       max="100"
-                      value={
-                        typeof element.styles?.backgroundPosition === 'string' &&
-                        element.styles.backgroundPosition.includes('%')
-                          ? parseInt(element.styles.backgroundPosition.split(' ')[0])
-                          : 50
-                      }
+                      value={(() => {
+                        const pos = element.styles?.backgroundPosition || 'center';
+                        if (typeof pos === 'string' && pos.includes('%')) {
+                          return parseInt(pos.split(' ')[0]);
+                        }
+                        const keywordMap: Record<string, number> = {
+                          'left': 0, 'center': 50, 'right': 100,
+                          'top left': 0, 'top': 50, 'top right': 100,
+                          'bottom left': 0, 'bottom': 50, 'bottom right': 100
+                        };
+                        return keywordMap[pos] ?? 50;
+                      })()}
                       onChange={(e) => {
                         const xVal = e.target.value || '50';
                         const currentPos = element.styles?.backgroundPosition || 'center';
-                        const yVal =
-                          typeof currentPos === 'string' && currentPos.includes('%')
-                            ? currentPos.split(' ')[1] || '50%'
-                            : '50%';
+                        let yVal = '50';
+                        if (typeof currentPos === 'string' && currentPos.includes('%')) {
+                          yVal = currentPos.split(' ')[1]?.replace('%', '') || '50';
+                        } else if (typeof currentPos === 'string') {
+                          const keywordMap: Record<string, number> = {
+                            'top': 0, 'top left': 0, 'top right': 0,
+                            'center': 50, 'left': 50, 'right': 50,
+                            'bottom': 100, 'bottom left': 100, 'bottom right': 100
+                          };
+                          yVal = String(keywordMap[currentPos] ?? 50);
+                        }
                         onUpdateElement(element.id, {
-                          styles: { ...element.styles, backgroundPosition: `${xVal}% ${yVal}` },
+                          styles: { ...element.styles, backgroundPosition: `${xVal}% ${yVal}%` },
                         });
                       }}
                       className="w-14 px-2 py-1 bg-slate-800 text-white text-center rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
@@ -482,21 +508,34 @@ export default function PropertiesPanel({
                       min="0"
                       max="100"
                       step="1"
-                      value={
-                        typeof element.styles?.backgroundPosition === 'string' &&
-                        element.styles.backgroundPosition.includes('%')
-                          ? parseInt(element.styles.backgroundPosition.split(' ')[1] || '50')
-                          : 50
-                      }
+                      value={(() => {
+                        const pos = element.styles?.backgroundPosition || 'center';
+                        if (typeof pos === 'string' && pos.includes('%')) {
+                          return parseInt(pos.split(' ')[1]?.replace('%', '') || '50');
+                        }
+                        const keywordMap: Record<string, number> = {
+                          'top': 0, 'top left': 0, 'top right': 0,
+                          'center': 50, 'left': 50, 'right': 50,
+                          'bottom': 100, 'bottom left': 100, 'bottom right': 100
+                        };
+                        return keywordMap[pos] ?? 50;
+                      })()}
                       onChange={(e) => {
                         const yVal = e.target.value;
                         const currentPos = element.styles?.backgroundPosition || 'center';
-                        const xVal =
-                          typeof currentPos === 'string' && currentPos.includes('%')
-                            ? currentPos.split(' ')[0] || '50%'
-                            : '50%';
+                        let xVal = '50';
+                        if (typeof currentPos === 'string' && currentPos.includes('%')) {
+                          xVal = currentPos.split(' ')[0]?.replace('%', '') || '50';
+                        } else if (typeof currentPos === 'string') {
+                          const keywordMap: Record<string, number> = {
+                            'left': 0, 'top left': 0, 'bottom left': 0,
+                            'center': 50, 'top': 50, 'bottom': 50,
+                            'right': 100, 'top right': 100, 'bottom right': 100
+                          };
+                          xVal = String(keywordMap[currentPos] ?? 50);
+                        }
                         onUpdateElement(element.id, {
-                          styles: { ...element.styles, backgroundPosition: `${xVal} ${yVal}%` },
+                          styles: { ...element.styles, backgroundPosition: `${xVal}% ${yVal}%` },
                         });
                       }}
                       className="flex-1"
@@ -506,21 +545,34 @@ export default function PropertiesPanel({
                       type="number"
                       min="0"
                       max="100"
-                      value={
-                        typeof element.styles?.backgroundPosition === 'string' &&
-                        element.styles.backgroundPosition.includes('%')
-                          ? parseInt(element.styles.backgroundPosition.split(' ')[1] || '50')
-                          : 50
-                      }
+                      value={(() => {
+                        const pos = element.styles?.backgroundPosition || 'center';
+                        if (typeof pos === 'string' && pos.includes('%')) {
+                          return parseInt(pos.split(' ')[1]?.replace('%', '') || '50');
+                        }
+                        const keywordMap: Record<string, number> = {
+                          'top': 0, 'top left': 0, 'top right': 0,
+                          'center': 50, 'left': 50, 'right': 50,
+                          'bottom': 100, 'bottom left': 100, 'bottom right': 100
+                        };
+                        return keywordMap[pos] ?? 50;
+                      })()}
                       onChange={(e) => {
                         const yVal = e.target.value || '50';
                         const currentPos = element.styles?.backgroundPosition || 'center';
-                        const xVal =
-                          typeof currentPos === 'string' && currentPos.includes('%')
-                            ? currentPos.split(' ')[0] || '50%'
-                            : '50%';
+                        let xVal = '50';
+                        if (typeof currentPos === 'string' && currentPos.includes('%')) {
+                          xVal = currentPos.split(' ')[0]?.replace('%', '') || '50';
+                        } else if (typeof currentPos === 'string') {
+                          const keywordMap: Record<string, number> = {
+                            'left': 0, 'top left': 0, 'bottom left': 0,
+                            'center': 50, 'top': 50, 'bottom': 50,
+                            'right': 100, 'top right': 100, 'bottom right': 100
+                          };
+                          xVal = String(keywordMap[currentPos] ?? 50);
+                        }
                         onUpdateElement(element.id, {
-                          styles: { ...element.styles, backgroundPosition: `${xVal} ${yVal}%` },
+                          styles: { ...element.styles, backgroundPosition: `${xVal}% ${yVal}%` },
                         });
                       }}
                       className="w-14 px-2 py-1 bg-slate-800 text-white text-center rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
