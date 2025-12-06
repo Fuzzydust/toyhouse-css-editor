@@ -22,6 +22,7 @@ function App() {
   const [history, setHistory] = useState<Project[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const isUndoRedoAction = useRef(false);
+  const historyTimeoutRef = useRef<number | null>(null);
 
   const selectedElement = project.elements.find((el) => el.id === selectedElementId);
 
@@ -31,13 +32,29 @@ function App() {
       return;
     }
 
-    setHistory((prev) => {
-      const newHistory = prev.slice(0, historyIndex + 1);
-      newHistory.push(project);
-      return newHistory.slice(-50);
-    });
-    setHistoryIndex((prev) => Math.min(prev + 1, 49));
-  }, [project]);
+    if (historyTimeoutRef.current) {
+      clearTimeout(historyTimeoutRef.current);
+    }
+
+    historyTimeoutRef.current = setTimeout(() => {
+      setHistory((prev) => {
+        const lastState = prev[historyIndex];
+        if (lastState && JSON.stringify(lastState) === JSON.stringify(project)) {
+          return prev;
+        }
+        const newHistory = prev.slice(0, historyIndex + 1);
+        newHistory.push(project);
+        return newHistory.slice(-50);
+      });
+      setHistoryIndex((prev) => Math.min(prev + 1, 49));
+    }, 400);
+
+    return () => {
+      if (historyTimeoutRef.current) {
+        clearTimeout(historyTimeoutRef.current);
+      }
+    };
+  }, [project, historyIndex]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -56,6 +73,10 @@ function App() {
 
   const undo = () => {
     if (historyIndex > 0) {
+      if (historyTimeoutRef.current) {
+        clearTimeout(historyTimeoutRef.current);
+        historyTimeoutRef.current = null;
+      }
       isUndoRedoAction.current = true;
       const previousState = history[historyIndex - 1];
       setProject(previousState);
@@ -65,6 +86,10 @@ function App() {
 
   const redo = () => {
     if (historyIndex < history.length - 1) {
+      if (historyTimeoutRef.current) {
+        clearTimeout(historyTimeoutRef.current);
+        historyTimeoutRef.current = null;
+      }
       isUndoRedoAction.current = true;
       const nextState = history[historyIndex + 1];
       setProject(nextState);
