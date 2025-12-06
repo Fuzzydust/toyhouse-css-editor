@@ -415,59 +415,117 @@ export default function PropertiesPanel({
 
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Fine-tune Position (X, Y in %)
+                    Horizontal Position
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs text-slate-400 mb-1">X Position</label>
-                      <input
-                        type="number"
-                        placeholder="50"
-                        value={
-                          typeof element.styles?.backgroundPosition === 'string' &&
-                          element.styles.backgroundPosition.includes('%')
-                            ? parseInt(element.styles.backgroundPosition.split(' ')[0])
-                            : ''
-                        }
-                        onChange={(e) => {
-                          const xVal = e.target.value || '50';
-                          const currentPos = element.styles?.backgroundPosition || 'center';
-                          const yVal =
-                            typeof currentPos === 'string' && currentPos.includes('%')
-                              ? currentPos.split(' ')[1] || '50%'
-                              : '50%';
-                          onUpdateElement(element.id, {
-                            styles: { ...element.styles, backgroundPosition: `${xVal}% ${yVal}` },
-                          });
-                        }}
-                        className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-slate-400 mb-1">Y Position</label>
-                      <input
-                        type="number"
-                        placeholder="50"
-                        value={
-                          typeof element.styles?.backgroundPosition === 'string' &&
-                          element.styles.backgroundPosition.includes('%')
-                            ? parseInt(element.styles.backgroundPosition.split(' ')[1] || '50')
-                            : ''
-                        }
-                        onChange={(e) => {
-                          const yVal = e.target.value || '50';
-                          const currentPos = element.styles?.backgroundPosition || 'center';
-                          const xVal =
-                            typeof currentPos === 'string' && currentPos.includes('%')
-                              ? currentPos.split(' ')[0] || '50%'
-                              : '50%';
-                          onUpdateElement(element.id, {
-                            styles: { ...element.styles, backgroundPosition: `${xVal} ${yVal}%` },
-                          });
-                        }}
-                        className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
-                      />
-                    </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-slate-400 w-8">Left</span>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="1"
+                      value={
+                        typeof element.styles?.backgroundPosition === 'string' &&
+                        element.styles.backgroundPosition.includes('%')
+                          ? parseInt(element.styles.backgroundPosition.split(' ')[0])
+                          : 50
+                      }
+                      onChange={(e) => {
+                        const xVal = e.target.value;
+                        const currentPos = element.styles?.backgroundPosition || 'center';
+                        const yVal =
+                          typeof currentPos === 'string' && currentPos.includes('%')
+                            ? currentPos.split(' ')[1] || '50%'
+                            : '50%';
+                        onUpdateElement(element.id, {
+                          styles: { ...element.styles, backgroundPosition: `${xVal}% ${yVal}` },
+                        });
+                      }}
+                      className="flex-1"
+                    />
+                    <span className="text-xs text-slate-400 w-8 text-right">Right</span>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={
+                        typeof element.styles?.backgroundPosition === 'string' &&
+                        element.styles.backgroundPosition.includes('%')
+                          ? parseInt(element.styles.backgroundPosition.split(' ')[0])
+                          : 50
+                      }
+                      onChange={(e) => {
+                        const xVal = e.target.value || '50';
+                        const currentPos = element.styles?.backgroundPosition || 'center';
+                        const yVal =
+                          typeof currentPos === 'string' && currentPos.includes('%')
+                            ? currentPos.split(' ')[1] || '50%'
+                            : '50%';
+                        onUpdateElement(element.id, {
+                          styles: { ...element.styles, backgroundPosition: `${xVal}% ${yVal}` },
+                        });
+                      }}
+                      className="w-14 px-2 py-1 bg-slate-800 text-white text-center rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
+                    />
+                    <span className="text-xs text-slate-400">%</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Vertical Position
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-slate-400 w-8">Top</span>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="1"
+                      value={
+                        typeof element.styles?.backgroundPosition === 'string' &&
+                        element.styles.backgroundPosition.includes('%')
+                          ? parseInt(element.styles.backgroundPosition.split(' ')[1] || '50')
+                          : 50
+                      }
+                      onChange={(e) => {
+                        const yVal = e.target.value;
+                        const currentPos = element.styles?.backgroundPosition || 'center';
+                        const xVal =
+                          typeof currentPos === 'string' && currentPos.includes('%')
+                            ? currentPos.split(' ')[0] || '50%'
+                            : '50%';
+                        onUpdateElement(element.id, {
+                          styles: { ...element.styles, backgroundPosition: `${xVal} ${yVal}%` },
+                        });
+                      }}
+                      className="flex-1"
+                    />
+                    <span className="text-xs text-slate-400 w-8 text-right">Bottom</span>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={
+                        typeof element.styles?.backgroundPosition === 'string' &&
+                        element.styles.backgroundPosition.includes('%')
+                          ? parseInt(element.styles.backgroundPosition.split(' ')[1] || '50')
+                          : 50
+                      }
+                      onChange={(e) => {
+                        const yVal = e.target.value || '50';
+                        const currentPos = element.styles?.backgroundPosition || 'center';
+                        const xVal =
+                          typeof currentPos === 'string' && currentPos.includes('%')
+                            ? currentPos.split(' ')[0] || '50%'
+                            : '50%';
+                        onUpdateElement(element.id, {
+                          styles: { ...element.styles, backgroundPosition: `${xVal} ${yVal}%` },
+                        });
+                      }}
+                      className="w-14 px-2 py-1 bg-slate-800 text-white text-center rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
+                    />
+                    <span className="text-xs text-slate-400">%</span>
                   </div>
                 </div>
 
