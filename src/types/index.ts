@@ -49,6 +49,7 @@ export interface CanvasElement {
     backgroundImage?: string;
     backgroundSize?: string;
     backgroundPosition?: string;
+    backgroundRepeat?: string;
     borderRadius?: number | string;
     opacity?: number;
     borderWidth?: number;

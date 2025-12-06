@@ -347,23 +347,150 @@ export default function PropertiesPanel({
         </div>
 
         {(element.type === 'image' || element.type === 'pagedoll' || element.type === 'shape') && (
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
-              {element.styles?.backgroundImage ? 'Image URL' : 'Add Background Image'}
-            </label>
-            <button
-              onClick={() => {
-                const bgImage = element.styles?.backgroundImage || '';
-                const url = bgImage.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '');
-                setImageLink(url);
-                setShowImageLinkPopup(true);
-              }}
-              className="w-full px-3 py-2 bg-slate-800 text-blue-400 rounded border border-slate-600 hover:bg-slate-700 transition-colors flex items-center gap-2 justify-center"
-            >
-              <Link className="w-4 h-4" />
-              {element.styles?.backgroundImage ? 'View/Edit Image Link' : 'Add Image to Shape'}
-            </button>
-          </div>
+          <>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">
+                {element.styles?.backgroundImage ? 'Image URL' : 'Add Background Image'}
+              </label>
+              <button
+                onClick={() => {
+                  const bgImage = element.styles?.backgroundImage || '';
+                  const url = bgImage.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '');
+                  setImageLink(url);
+                  setShowImageLinkPopup(true);
+                }}
+                className="w-full px-3 py-2 bg-slate-800 text-blue-400 rounded border border-slate-600 hover:bg-slate-700 transition-colors flex items-center gap-2 justify-center"
+              >
+                <Link className="w-4 h-4" />
+                {element.styles?.backgroundImage ? 'View/Edit Image Link' : 'Add Image to Shape'}
+              </button>
+            </div>
+
+            {element.styles?.backgroundImage && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Image Size</label>
+                  <select
+                    value={element.styles?.backgroundSize || 'cover'}
+                    onChange={(e) =>
+                      onUpdateElement(element.id, {
+                        styles: { ...element.styles, backgroundSize: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+                  >
+                    <option value="cover">Cover (Fill Shape)</option>
+                    <option value="contain">Contain (Fit Inside)</option>
+                    <option value="100% 100%">Stretch</option>
+                    <option value="auto">Original Size</option>
+                    <option value="50%">50%</option>
+                    <option value="75%">75%</option>
+                    <option value="150%">150%</option>
+                    <option value="200%">200%</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Image Position</label>
+                  <select
+                    value={element.styles?.backgroundPosition || 'center'}
+                    onChange={(e) =>
+                      onUpdateElement(element.id, {
+                        styles: { ...element.styles, backgroundPosition: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+                  >
+                    <option value="center">Center</option>
+                    <option value="top">Top</option>
+                    <option value="bottom">Bottom</option>
+                    <option value="left">Left</option>
+                    <option value="right">Right</option>
+                    <option value="top left">Top Left</option>
+                    <option value="top right">Top Right</option>
+                    <option value="bottom left">Bottom Left</option>
+                    <option value="bottom right">Bottom Right</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Fine-tune Position (X, Y in %)
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">X Position</label>
+                      <input
+                        type="number"
+                        placeholder="50"
+                        value={
+                          typeof element.styles?.backgroundPosition === 'string' &&
+                          element.styles.backgroundPosition.includes('%')
+                            ? parseInt(element.styles.backgroundPosition.split(' ')[0])
+                            : ''
+                        }
+                        onChange={(e) => {
+                          const xVal = e.target.value || '50';
+                          const currentPos = element.styles?.backgroundPosition || 'center';
+                          const yVal =
+                            typeof currentPos === 'string' && currentPos.includes('%')
+                              ? currentPos.split(' ')[1] || '50%'
+                              : '50%';
+                          onUpdateElement(element.id, {
+                            styles: { ...element.styles, backgroundPosition: `${xVal}% ${yVal}` },
+                          });
+                        }}
+                        className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Y Position</label>
+                      <input
+                        type="number"
+                        placeholder="50"
+                        value={
+                          typeof element.styles?.backgroundPosition === 'string' &&
+                          element.styles.backgroundPosition.includes('%')
+                            ? parseInt(element.styles.backgroundPosition.split(' ')[1] || '50')
+                            : ''
+                        }
+                        onChange={(e) => {
+                          const yVal = e.target.value || '50';
+                          const currentPos = element.styles?.backgroundPosition || 'center';
+                          const xVal =
+                            typeof currentPos === 'string' && currentPos.includes('%')
+                              ? currentPos.split(' ')[0] || '50%'
+                              : '50%';
+                          onUpdateElement(element.id, {
+                            styles: { ...element.styles, backgroundPosition: `${xVal} ${yVal}%` },
+                          });
+                        }}
+                        className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Image Repeat</label>
+                  <select
+                    value={element.styles?.backgroundRepeat || 'no-repeat'}
+                    onChange={(e) =>
+                      onUpdateElement(element.id, {
+                        styles: { ...element.styles, backgroundRepeat: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+                  >
+                    <option value="no-repeat">No Repeat</option>
+                    <option value="repeat">Repeat</option>
+                    <option value="repeat-x">Repeat Horizontally</option>
+                    <option value="repeat-y">Repeat Vertically</option>
+                  </select>
+                </div>
+              </>
+            )}
+          </>
         )}
 
         {element.type === 'shape' && (
