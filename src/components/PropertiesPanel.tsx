@@ -383,11 +383,61 @@ export default function PropertiesPanel({
                     <option value="contain">Contain (Fit Inside)</option>
                     <option value="100% 100%">Stretch</option>
                     <option value="auto">Original Size</option>
-                    <option value="50%">50%</option>
-                    <option value="75%">75%</option>
-                    <option value="150%">150%</option>
-                    <option value="200%">200%</option>
+                    <option value="custom">Custom Zoom</option>
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Zoom Level
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-slate-400 w-8">25%</span>
+                    <input
+                      type="range"
+                      min="25"
+                      max="300"
+                      step="5"
+                      value={(() => {
+                        const size = element.styles?.backgroundSize || 'cover';
+                        if (size === 'custom' || (typeof size === 'string' && size.includes('%') && !size.includes('100% 100%'))) {
+                          const match = size.match(/^(\d+)%/);
+                          if (match) return parseInt(match[1]);
+                        }
+                        return 100;
+                      })()}
+                      onChange={(e) => {
+                        const zoom = e.target.value;
+                        onUpdateElement(element.id, {
+                          styles: { ...element.styles, backgroundSize: `${zoom}%` },
+                        });
+                      }}
+                      className="flex-1"
+                    />
+                    <span className="text-xs text-slate-400 w-10">300%</span>
+                    <input
+                      type="number"
+                      min="25"
+                      max="300"
+                      step="5"
+                      value={(() => {
+                        const size = element.styles?.backgroundSize || 'cover';
+                        if (size === 'custom' || (typeof size === 'string' && size.includes('%') && !size.includes('100% 100%'))) {
+                          const match = size.match(/^(\d+)%/);
+                          if (match) return parseInt(match[1]);
+                        }
+                        return 100;
+                      })()}
+                      onChange={(e) => {
+                        const zoom = e.target.value || '100';
+                        onUpdateElement(element.id, {
+                          styles: { ...element.styles, backgroundSize: `${zoom}%` },
+                        });
+                      }}
+                      className="w-16 px-2 py-1 bg-slate-800 text-white text-center rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
+                    />
+                    <span className="text-xs text-slate-400">%</span>
+                  </div>
                 </div>
 
                 <div>
