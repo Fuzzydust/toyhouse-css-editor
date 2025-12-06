@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Header from './components/Header';
 import Canvas from './components/Canvas';
 import Toolbar from './components/Toolbar';
@@ -19,8 +19,58 @@ function App() {
   });
 
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
+  const [history, setHistory] = useState<Project[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const isUndoRedoAction = useRef(false);
 
   const selectedElement = project.elements.find((el) => el.id === selectedElementId);
+
+  useEffect(() => {
+    if (isUndoRedoAction.current) {
+      isUndoRedoAction.current = false;
+      return;
+    }
+
+    setHistory((prev) => {
+      const newHistory = prev.slice(0, historyIndex + 1);
+      newHistory.push(project);
+      return newHistory.slice(-50);
+    });
+    setHistoryIndex((prev) => Math.min(prev + 1, 49));
+  }, [project]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+        e.preventDefault();
+        redo();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [historyIndex, history]);
+
+  const undo = () => {
+    if (historyIndex > 0) {
+      isUndoRedoAction.current = true;
+      const previousState = history[historyIndex - 1];
+      setProject(previousState);
+      setHistoryIndex((prev) => prev - 1);
+    }
+  };
+
+  const redo = () => {
+    if (historyIndex < history.length - 1) {
+      isUndoRedoAction.current = true;
+      const nextState = history[historyIndex + 1];
+      setProject(nextState);
+      setHistoryIndex((prev) => prev + 1);
+    }
+  };
 
   const addElement = (element: CanvasElement) => {
     setProject((prev) => ({
@@ -105,6 +155,10 @@ function App() {
         onProjectUpdate={updateCanvasSettings}
         onPageChange={changePage}
         onPageAdd={addPage}
+        onUndo={undo}
+        onRedo={redo}
+        canUndo={historyIndex > 0}
+        canRedo={historyIndex < history.length - 1}
       />
 
       <div className="flex-1 flex overflow-hidden">
