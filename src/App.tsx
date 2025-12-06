@@ -126,24 +126,33 @@ function App() {
 
   const reorderElement = (id: string, direction: 'up' | 'down') => {
     setProject((prev) => {
-      const elements = [...prev.elements];
-      const element = elements.find((el) => el.id === id);
+      const element = prev.elements.find((el) => el.id === id);
       if (!element) return prev;
 
-      const sortedElements = [...elements].sort((a, b) => b.zIndex - a.zIndex);
+      const sortedElements = [...prev.elements].sort((a, b) => b.zIndex - a.zIndex);
       const currentIndex = sortedElements.findIndex((el) => el.id === id);
 
+      let targetElementId: string | null = null;
       if (direction === 'up' && currentIndex > 0) {
-        const targetElement = sortedElements[currentIndex - 1];
-        const tempZIndex = element.zIndex;
-        element.zIndex = targetElement.zIndex;
-        targetElement.zIndex = tempZIndex;
+        targetElementId = sortedElements[currentIndex - 1].id;
       } else if (direction === 'down' && currentIndex < sortedElements.length - 1) {
-        const targetElement = sortedElements[currentIndex + 1];
-        const tempZIndex = element.zIndex;
-        element.zIndex = targetElement.zIndex;
-        targetElement.zIndex = tempZIndex;
+        targetElementId = sortedElements[currentIndex + 1].id;
       }
+
+      if (!targetElementId) return prev;
+
+      const targetElement = prev.elements.find((el) => el.id === targetElementId);
+      if (!targetElement) return prev;
+
+      const elements = prev.elements.map((el) => {
+        if (el.id === id) {
+          return { ...el, zIndex: targetElement.zIndex };
+        }
+        if (el.id === targetElementId) {
+          return { ...el, zIndex: element.zIndex };
+        }
+        return el;
+      });
 
       return { ...prev, elements };
     });
