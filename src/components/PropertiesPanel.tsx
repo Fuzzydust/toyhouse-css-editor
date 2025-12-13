@@ -179,61 +179,63 @@ export default function PropertiesPanel({
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">Link</label>
-          <div className="space-y-2">
-            <select
-              value={element.link?.type || ''}
-              onChange={(e) => {
-                if (!e.target.value) {
-                  onUpdateElement(element.id, { link: undefined });
-                } else {
-                  onUpdateElement(element.id, {
-                    link: {
-                      type: e.target.value as 'page' | 'url',
-                      target: '',
-                      openInNewTab: false,
-                    },
-                  });
-                }
-              }}
-              className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
-            >
-              <option value="">No Link</option>
-              <option value="page">Link to Page</option>
-              <option value="url">Link to URL</option>
-            </select>
-
-            {element.link && (
-              <>
-                <input
-                  type="text"
-                  value={element.link.target}
-                  onChange={(e) =>
+        {element.type !== 'text' && (
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Link</label>
+            <div className="space-y-2">
+              <select
+                value={element.link?.type || ''}
+                onChange={(e) => {
+                  if (!e.target.value) {
+                    onUpdateElement(element.id, { link: undefined });
+                  } else {
                     onUpdateElement(element.id, {
-                      link: { ...element.link!, target: e.target.value },
-                    })
+                      link: {
+                        type: e.target.value as 'page' | 'url',
+                        target: '',
+                        openInNewTab: false,
+                      },
+                    });
                   }
-                  placeholder={element.link.type === 'page' ? 'Page ID' : 'https://example.com'}
-                  className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
-                />
-                <label className="flex items-center gap-2 text-sm text-slate-300">
+                }}
+                className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+              >
+                <option value="">No Link</option>
+                <option value="page">Link to Page</option>
+                <option value="url">Link to URL</option>
+              </select>
+
+              {element.link && (
+                <>
                   <input
-                    type="checkbox"
-                    checked={element.link.openInNewTab || false}
+                    type="text"
+                    value={element.link.target}
                     onChange={(e) =>
                       onUpdateElement(element.id, {
-                        link: { ...element.link!, openInNewTab: e.target.checked },
+                        link: { ...element.link!, target: e.target.value },
                       })
                     }
-                    className="rounded bg-slate-800 border-slate-600"
+                    placeholder={element.link.type === 'page' ? 'Page ID' : 'https://example.com'}
+                    className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
                   />
-                  Open in new tab
-                </label>
-              </>
-            )}
+                  <label className="flex items-center gap-2 text-sm text-slate-300">
+                    <input
+                      type="checkbox"
+                      checked={element.link.openInNewTab || false}
+                      onChange={(e) =>
+                        onUpdateElement(element.id, {
+                          link: { ...element.link!, openInNewTab: e.target.checked },
+                        })
+                      }
+                      className="rounded bg-slate-800 border-slate-600"
+                    />
+                    Open in new tab
+                  </label>
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {element.type === 'text' && (
           <>
