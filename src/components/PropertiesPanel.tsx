@@ -346,7 +346,7 @@ export default function PropertiesPanel({
           />
         </div>
 
-        {(element.type === 'image' || element.type === 'pagedoll' || element.type === 'shape') && (
+        {(element.type === 'image' || element.type === 'pagedoll' || element.type === 'shape' || element.type === 'div') && (
           <>
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1">
@@ -362,7 +362,7 @@ export default function PropertiesPanel({
                 className="w-full px-3 py-2 bg-slate-800 text-blue-400 rounded border border-slate-600 hover:bg-slate-700 transition-colors flex items-center gap-2 justify-center"
               >
                 <Link className="w-4 h-4" />
-                {element.styles?.backgroundImage ? 'View/Edit Image Link' : 'Add Image to Shape'}
+                {element.styles?.backgroundImage ? 'View/Edit Image Link' : 'Add Background Image'}
               </button>
             </div>
 
