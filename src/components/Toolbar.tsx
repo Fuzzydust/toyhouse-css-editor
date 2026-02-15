@@ -1,4 +1,4 @@
-import { Square, Image, Type, Circle, Triangle, Hexagon, Scroll } from 'lucide-react';
+import { Square, Image, Type, Circle, Triangle, Hexagon, Scroll, Map } from 'lucide-react';
 import { CanvasElement } from '../types';
 
 interface ToolbarProps {
@@ -175,13 +175,34 @@ export default function Toolbar({ onAddElement }: ToolbarProps) {
     onAddElement(element);
   };
 
+  const createWorld = () => {
+    const element: CanvasElement = {
+      id: `world-${Date.now()}`,
+      type: 'world',
+      x: 50,
+      y: 50,
+      width: 700,
+      height: 500,
+      rotation: 0,
+      zIndex: 1,
+      worldImage: '',
+      locations: [],
+      styles: {
+        backgroundColor: '#1e293b',
+        opacity: 1,
+      },
+    };
+    onAddElement(element);
+  };
+
   const tools = [
     { icon: Square, label: 'Div', onClick: createDiv, color: 'from-blue-500 to-blue-600' },
     { icon: Image, label: 'Image', onClick: createImage, color: 'from-rose-500 to-rose-600' },
     { icon: Scroll, label: 'Page Doll', onClick: createPageDoll, color: 'from-cyan-500 to-cyan-600' },
     { icon: Type, label: 'Text', onClick: createText, color: 'from-green-500 to-green-600' },
+    { icon: Map, label: 'World', onClick: createWorld, color: 'from-teal-500 to-teal-600' },
     { icon: Circle, label: 'Circle', onClick: createCircle, color: 'from-red-500 to-red-600' },
-    { icon: Square, label: 'Rectangle', onClick: createRectangle, color: 'from-violet-500 to-violet-600' },
+    { icon: Square, label: 'Rectangle', onClick: createRectangle, color: 'from-amber-500 to-amber-600' },
     { icon: Triangle, label: 'Triangle', onClick: createTriangle, color: 'from-emerald-500 to-emerald-600' },
     { icon: Hexagon, label: 'Hexagon', onClick: () => createPolygon(6), color: 'from-orange-500 to-orange-600' },
   ];

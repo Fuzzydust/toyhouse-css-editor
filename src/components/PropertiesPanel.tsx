@@ -1,6 +1,7 @@
 import { Trash2, Settings, Link, X } from 'lucide-react';
-import { CanvasElement } from '../types';
+import { CanvasElement, Project } from '../types';
 import { useState } from 'react';
+import WorldMaker from './WorldMaker';
 
 interface PropertiesPanelProps {
   element: CanvasElement | undefined;
@@ -12,6 +13,7 @@ interface PropertiesPanelProps {
     background: string;
   };
   onUpdateCanvas: (updates: any) => void;
+  project?: Project;
 }
 
 const TOYHOUSE_FONTS = [
@@ -41,6 +43,7 @@ export default function PropertiesPanel({
   onDeleteElement,
   canvasSettings,
   onUpdateCanvas,
+  project,
 }: PropertiesPanelProps) {
   const [showImageLinkPopup, setShowImageLinkPopup] = useState(false);
   const [imageLink, setImageLink] = useState('');
@@ -92,6 +95,19 @@ export default function PropertiesPanel({
             </div>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (element.type === 'world') {
+    const pages = project?.pages?.map(p => ({ id: p.id, name: p.name })) || [];
+    return (
+      <div className="h-full overflow-hidden">
+        <WorldMaker
+          element={element}
+          onUpdateElement={onUpdateElement}
+          pages={pages}
+        />
       </div>
     );
   }

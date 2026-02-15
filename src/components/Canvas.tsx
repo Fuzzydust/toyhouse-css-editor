@@ -194,6 +194,97 @@ export default function Canvas({
     const isSelected = element.id === selectedElementId;
     const isLocked = element.locked === true;
 
+    if (element.type === 'world') {
+      const worldStyle: React.CSSProperties = {
+        position: 'absolute',
+        left: element.x,
+        top: element.y,
+        width: element.width,
+        height: element.height,
+        transform: `rotate(${element.rotation}deg)`,
+        cursor: isLocked ? 'not-allowed' : 'move',
+        pointerEvents: 'auto',
+        ...element.styles,
+        mixBlendMode: element.styles?.mixBlendMode as any,
+      };
+
+      return (
+        <div
+          key={element.id}
+          style={worldStyle}
+          onClick={(e) => handleElementClick(e, element)}
+          onMouseDown={(e) => handleMouseDown(e, element)}
+          className={`${isSelected ? 'ring-2 ring-blue-500' : ''}`}
+        >
+          {element.worldImage && (
+            <div className="relative w-full h-full">
+              <img
+                src={element.worldImage}
+                alt="World background"
+                className="w-full h-full object-cover rounded"
+                draggable={false}
+              />
+              {element.locations?.map((location) => (
+                <div
+                  key={location.id}
+                  className="absolute"
+                  style={{
+                    left: `${location.x}%`,
+                    top: `${location.y}%`,
+                    transform: 'translate(-50%, -50%)',
+                  }}
+                >
+                  <div
+                    className="whitespace-nowrap select-none"
+                    style={{
+                      backgroundColor: location.buttonStyles?.backgroundColor || '#1a1a1a',
+                      color: location.buttonStyles?.color || '#ffffff',
+                      border: `${location.buttonStyles?.borderWidth || 2}px solid ${location.buttonStyles?.borderColor || '#ffffff'}`,
+                      borderRadius: `${location.buttonStyles?.borderRadius || 8}px`,
+                      padding: location.buttonStyles?.padding || '8px 14px',
+                      fontSize: location.buttonStyles?.fontSize || '14px',
+                      fontWeight: location.buttonStyles?.fontWeight || 'bold',
+                    }}
+                  >
+                    {location.name}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {!element.worldImage && (
+            <div className="w-full h-full flex items-center justify-center bg-slate-800 rounded text-slate-400">
+              <div className="text-center">
+                <div className="text-4xl mb-2">🗺️</div>
+                <div className="text-sm">World Element</div>
+                <div className="text-xs">Select to edit</div>
+              </div>
+            </div>
+          )}
+          {isSelected && !isLocked && (
+            <>
+              <div className="resize-handle absolute -top-1 -left-1 w-3 h-3 bg-blue-500 rounded-full cursor-nw-resize" data-handle="nw" />
+              <div className="resize-handle absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full cursor-ne-resize" data-handle="ne" />
+              <div className="resize-handle absolute -bottom-1 -left-1 w-3 h-3 bg-blue-500 rounded-full cursor-sw-resize" data-handle="sw" />
+              <div className="resize-handle absolute -bottom-1 -right-1 w-3 h-3 bg-blue-500 rounded-full cursor-se-resize" data-handle="se" />
+              <div className="rotate-handle absolute -top-8 left-1/2 -translate-x-1/2 w-6 h-6 bg-green-500 rounded-full cursor-grab hover:bg-green-400 flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" className="pointer-events-none">
+                  <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                </svg>
+              </div>
+            </>
+          )}
+          {isSelected && isLocked && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="bg-slate-900/80 text-yellow-400 px-2 py-1 rounded text-xs font-semibold">
+                Locked
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
     const style: React.CSSProperties = {
       position: element.type === 'pagedoll' ? 'fixed' : 'absolute',
       left: element.x,

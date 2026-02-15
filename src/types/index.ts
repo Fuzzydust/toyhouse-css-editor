@@ -19,9 +19,31 @@ export interface ImageStyles {
   shadowColor: string;
 }
 
+export interface WorldLocation {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  link?: {
+    type: 'page' | 'url';
+    target: string;
+    openInNewTab?: boolean;
+  };
+  buttonStyles?: {
+    backgroundColor?: string;
+    color?: string;
+    borderColor?: string;
+    borderWidth?: number;
+    borderRadius?: number;
+    padding?: string;
+    fontSize?: string;
+    fontWeight?: string;
+  };
+}
+
 export interface CanvasElement {
   id: string;
-  type: 'div' | 'image' | 'text' | 'shape' | 'pagedoll';
+  type: 'div' | 'image' | 'text' | 'shape' | 'pagedoll' | 'world';
   x: number;
   y: number;
   width: number;
@@ -44,6 +66,8 @@ export interface CanvasElement {
   textAlign?: string;
   shapeType?: 'circle' | 'rectangle' | 'triangle' | 'polygon' | 'ellipse';
   sides?: number;
+  worldImage?: string;
+  locations?: WorldLocation[];
   styles?: {
     backgroundColor?: string;
     backgroundImage?: string;

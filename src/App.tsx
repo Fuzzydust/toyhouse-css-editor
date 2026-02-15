@@ -231,6 +231,7 @@ function App() {
               background: project.canvasBackground,
             }}
             onUpdateCanvas={updateCanvasSettings}
+            project={project}
           />
           <CodeExportPanel project={project} />
         </div>

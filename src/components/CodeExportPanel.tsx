@@ -197,12 +197,36 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
     });
 
     regularElements.forEach((el) => {
-      const inlineStyle = generateInlineStyles(el);
-      html += `  <div style="${inlineStyle}">`;
-      if (el.type === 'text') {
-        html += el.content || 'Text';
+      if (el.type === 'world') {
+        const containerStyle = `position: relative; max-width: 700px; margin: auto;`;
+        const imgStyle = `width: 100%; display: block; border-radius: 8px;`;
+
+        html += `  <div style="${containerStyle}">\n`;
+        if (el.worldImage) {
+          html += `    <img src="${el.worldImage}" style="${imgStyle}">\n`;
+
+          el.locations?.forEach((loc: any) => {
+            const locationStyle = `position: absolute; top: ${loc.y}%; left: ${loc.x}%; z-index: 10; background: ${loc.buttonStyles?.backgroundColor || '#1a1a1a'}; color: ${loc.buttonStyles?.color || 'white'}; padding: ${loc.buttonStyles?.padding || '8px 14px'}; border: ${loc.buttonStyles?.borderWidth || 2}px solid ${loc.buttonStyles?.borderColor || 'white'}; border-radius: ${loc.buttonStyles?.borderRadius || 8}px; text-decoration: none; font-weight: ${loc.buttonStyles?.fontWeight || 'bold'};`;
+
+            if (loc.link?.type === 'url' && loc.link.target) {
+              const target = loc.link.openInNewTab ? ' target="_blank"' : '';
+              html += `    <a href="${loc.link.target}" style="${locationStyle}"${target}>\n      ${loc.name}\n    </a>\n`;
+            } else if (loc.link?.type === 'page' && loc.link.target) {
+              html += `    <a href="#${loc.link.target}" style="${locationStyle}">\n      ${loc.name}\n    </a>\n`;
+            } else {
+              html += `    <div style="${locationStyle}">\n      ${loc.name}\n    </div>\n`;
+            }
+          });
+        }
+        html += `  </div>\n`;
+      } else {
+        const inlineStyle = generateInlineStyles(el);
+        html += `  <div style="${inlineStyle}">`;
+        if (el.type === 'text') {
+          html += el.content || 'Text';
+        }
+        html += `</div>\n`;
       }
-      html += `</div>\n`;
     });
 
     pagedolls.forEach((el) => {
