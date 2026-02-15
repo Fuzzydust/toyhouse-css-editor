@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { WorldLocation, CanvasElement } from '../types';
-import { Plus, Trash2, Link as LinkIcon, Move, X, ArrowLeft } from 'lucide-react';
+import { Plus, Trash2, Link as LinkIcon, X, ArrowLeft } from 'lucide-react';
 
 interface WorldMakerProps {
   element: CanvasElement;
@@ -11,7 +11,6 @@ interface WorldMakerProps {
 
 export default function WorldMaker({ element, onUpdateElement, pages, onClose }: WorldMakerProps) {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const locations = element.locations || [];
@@ -47,30 +46,9 @@ export default function WorldMaker({ element, onUpdateElement, pages, onClose }:
     }
   };
 
-  const handleLocationMouseDown = (e: React.MouseEvent, locationId: string) => {
+  const handleLocationClick = (e: React.MouseEvent, locationId: string) => {
     e.stopPropagation();
     setSelectedLocationId(locationId);
-    setIsDragging(true);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDragging || !selectedLocationId || !containerRef.current) return;
-
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-    onUpdateElement(element.id, {
-      locations: locations.map(loc =>
-        loc.id === selectedLocationId
-          ? { ...loc, x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) }
-          : loc
-      ),
-    });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
   };
 
   const updateLocation = (locationId: string, updates: Partial<WorldLocation>) => {
@@ -145,9 +123,6 @@ export default function WorldMaker({ element, onUpdateElement, pages, onClose }:
                 ref={containerRef}
                 className="relative cursor-crosshair bg-slate-900 rounded-lg overflow-hidden shadow-xl"
                 onClick={handleContainerClick}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
                 style={{ minHeight: '600px' }}
               >
                 <img
@@ -160,18 +135,18 @@ export default function WorldMaker({ element, onUpdateElement, pages, onClose }:
                 {locations.map((location) => (
                   <div
                     key={location.id}
-                    className={`absolute cursor-move transition-transform ${
-                      selectedLocationId === location.id ? 'scale-110 z-20' : 'z-10'
+                    className={`absolute cursor-pointer transition-all ${
+                      selectedLocationId === location.id ? 'scale-110 z-20 ring-2 ring-teal-400' : 'z-10 hover:scale-105'
                     }`}
                     style={{
                       left: `${location.x}%`,
                       top: `${location.y}%`,
                       transform: 'translate(-50%, -50%)',
                     }}
-                    onMouseDown={(e) => handleLocationMouseDown(e, location.id)}
+                    onClick={(e) => handleLocationClick(e, location.id)}
                   >
                     <div
-                      className="whitespace-nowrap select-none flex items-center gap-2 shadow-lg"
+                      className="whitespace-nowrap select-none shadow-lg"
                       style={{
                         backgroundColor: location.buttonStyles?.backgroundColor || '#1a1a1a',
                         color: location.buttonStyles?.color || '#ffffff',
@@ -182,7 +157,6 @@ export default function WorldMaker({ element, onUpdateElement, pages, onClose }:
                         fontWeight: location.buttonStyles?.fontWeight || 'bold',
                       }}
                     >
-                      <Move size={12} />
                       {location.name}
                     </div>
                   </div>

@@ -25,7 +25,7 @@ export interface WorldLocation {
   x: number;
   y: number;
   link?: {
-    type: 'page' | 'url';
+    type: 'page' | 'url' | 'none';
     target: string;
     openInNewTab?: boolean;
   };
