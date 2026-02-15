@@ -43,7 +43,7 @@ export interface WorldLocation {
 
 export interface CanvasElement {
   id: string;
-  type: 'div' | 'image' | 'text' | 'shape' | 'pagedoll' | 'world';
+  type: 'div' | 'image' | 'text' | 'shape' | 'pagedoll' | 'world' | 'button';
   x: number;
   y: number;
   width: number;
@@ -63,6 +63,7 @@ export interface CanvasElement {
   fontSize?: number;
   fontColor?: string;
   fontFamily?: string;
+  fontWeight?: string;
   textAlign?: string;
   shapeType?: 'circle' | 'rectangle' | 'triangle' | 'polygon' | 'ellipse';
   sides?: number;
@@ -83,6 +84,7 @@ export interface CanvasElement {
     stroke?: string;
     strokeWidth?: number;
     mixBlendMode?: string;
+    padding?: string;
     [key: string]: any;
   };
 }

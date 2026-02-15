@@ -55,7 +55,7 @@ export default function Canvas({
 
   const handleDoubleClick = (e: React.MouseEvent, element: CanvasElement) => {
     e.stopPropagation();
-    if (element.locked || element.type !== 'text') return;
+    if (element.locked || (element.type !== 'text' && element.type !== 'button')) return;
     setEditingTextId(element.id);
   };
 
@@ -218,6 +218,20 @@ export default function Canvas({
       style.textAlign = element.textAlign as any;
     }
 
+    if (element.type === 'button') {
+      style.display = 'flex';
+      style.alignItems = 'center';
+      style.justifyContent = 'center';
+      style.fontSize = element.fontSize;
+      style.color = element.fontColor;
+      style.fontFamily = element.fontFamily;
+      style.fontWeight = element.fontWeight;
+      style.textAlign = element.textAlign as any;
+      style.textDecoration = 'none';
+      style.cursor = 'pointer';
+      style.userSelect = 'none';
+    }
+
     if (element.type === 'shape' && element.shapeType === 'triangle') {
       style.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
     }
@@ -228,11 +242,11 @@ export default function Canvas({
 
     const isEditing = editingTextId === element.id;
 
-    const content = element.type === 'text' ? (
+    const content = (element.type === 'text' || element.type === 'button') ? (
       isEditing ? (
         <input
           type="text"
-          value={element.content || 'Text'}
+          value={element.content || (element.type === 'button' ? 'Button' : 'Text')}
           onChange={(e) => handleTextChange(element.id, e.target.value)}
           onBlur={handleTextBlur}
           onKeyDown={handleTextKeyDown}
@@ -242,12 +256,13 @@ export default function Canvas({
             fontSize: element.fontSize,
             color: element.fontColor,
             fontFamily: element.fontFamily,
+            fontWeight: element.fontWeight,
             textAlign: element.textAlign as any,
           }}
           onClick={(e) => e.stopPropagation()}
         />
       ) : (
-        element.content || 'Text'
+        element.content || (element.type === 'button' ? 'Button' : 'Text')
       )
     ) : null;
 

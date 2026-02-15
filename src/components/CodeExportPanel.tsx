@@ -98,6 +98,22 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
         css += `  justify-content: center;\n`;
       }
 
+      if (el.type === 'button') {
+        if (el.fontSize) css += `  font-size: ${el.fontSize}px;\n`;
+        if (el.fontColor) css += `  color: ${el.fontColor};\n`;
+        if (el.fontFamily) css += `  font-family: ${el.fontFamily};\n`;
+        if (el.fontWeight) css += `  font-weight: ${el.fontWeight};\n`;
+        if (el.textAlign) css += `  text-align: ${el.textAlign};\n`;
+        if (el.styles?.padding) css += `  padding: ${el.styles.padding};\n`;
+        if (el.styles?.borderWidth) css += `  border: ${el.styles.borderWidth}px solid ${el.styles.borderColor || '#ffffff'};\n`;
+        css += `  text-decoration: none;\n`;
+        css += `  cursor: pointer;\n`;
+        css += `  display: flex;\n`;
+        css += `  align-items: center;\n`;
+        css += `  justify-content: center;\n`;
+        css += `  user-select: none;\n`;
+      }
+
       css += `}\n\n`;
     });
 
@@ -177,6 +193,22 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
       styles.push(`justify-content: center`);
     }
 
+    if (el.type === 'button') {
+      if (el.fontSize) styles.push(`font-size: ${el.fontSize}px`);
+      if (el.fontColor) styles.push(`color: ${el.fontColor}`);
+      if (el.fontFamily) styles.push(`font-family: ${el.fontFamily}`);
+      if (el.fontWeight) styles.push(`font-weight: ${el.fontWeight}`);
+      if (el.textAlign) styles.push(`text-align: ${el.textAlign}`);
+      if (el.styles?.padding) styles.push(`padding: ${el.styles.padding}`);
+      if (el.styles?.borderWidth) styles.push(`border: ${el.styles.borderWidth}px solid ${el.styles.borderColor || '#ffffff'}`);
+      styles.push(`text-decoration: none`);
+      styles.push(`cursor: pointer`);
+      styles.push(`display: flex`);
+      styles.push(`align-items: center`);
+      styles.push(`justify-content: center`);
+      styles.push(`user-select: none`);
+    }
+
     return styles.join('; ');
   };
 
@@ -219,6 +251,18 @@ export default function CodeExportPanel({ project }: CodeExportPanelProps) {
           });
         }
         html += `  </div>\n`;
+      } else if (el.type === 'button') {
+        const inlineStyle = generateInlineStyles(el);
+        const content = el.content || 'Button';
+
+        if (el.link?.type === 'url' && el.link.target) {
+          const target = el.link.openInNewTab ? ' target="_blank"' : '';
+          html += `  <a href="${el.link.target}" style="${inlineStyle}"${target}>${content}</a>\n`;
+        } else if (el.link?.type === 'page' && el.link.target) {
+          html += `  <a href="#${el.link.target}" style="${inlineStyle}">${content}</a>\n`;
+        } else {
+          html += `  <div style="${inlineStyle}">${content}</div>\n`;
+        }
       } else {
         const inlineStyle = generateInlineStyles(el);
         html += `  <div style="${inlineStyle}">`;

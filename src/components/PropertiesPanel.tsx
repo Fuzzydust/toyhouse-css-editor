@@ -248,7 +248,192 @@ export default function PropertiesPanel({
           />
         </div>
 
-        {element.type !== 'text' && (
+        {element.type === 'button' && (
+          <>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Button Text</label>
+              <input
+                type="text"
+                value={element.content || 'Button'}
+                onChange={(e) => onUpdateElement(element.id, { content: e.target.value })}
+                className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Font Family</label>
+              <select
+                value={element.fontFamily || 'Arial, sans-serif'}
+                onChange={(e) => onUpdateElement(element.id, { fontFamily: e.target.value })}
+                className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+              >
+                {TOYHOUSE_FONTS.map((font) => (
+                  <option key={font.value} value={font.value}>
+                    {font.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Font Size</label>
+                <input
+                  type="number"
+                  value={element.fontSize}
+                  onChange={(e) => onUpdateElement(element.id, { fontSize: parseInt(e.target.value) })}
+                  className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Font Weight</label>
+                <select
+                  value={element.fontWeight || 'bold'}
+                  onChange={(e) => onUpdateElement(element.id, { fontWeight: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="normal">Normal</option>
+                  <option value="bold">Bold</option>
+                  <option value="lighter">Lighter</option>
+                  <option value="bolder">Bolder</option>
+                  <option value="100">100</option>
+                  <option value="200">200</option>
+                  <option value="300">300</option>
+                  <option value="400">400</option>
+                  <option value="500">500</option>
+                  <option value="600">600</option>
+                  <option value="700">700</option>
+                  <option value="800">800</option>
+                  <option value="900">900</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Text Color</label>
+              <div className="flex gap-2">
+                <input
+                  type="color"
+                  value={element.fontColor}
+                  onChange={(e) => onUpdateElement(element.id, { fontColor: e.target.value })}
+                  className="w-12 h-10 rounded cursor-pointer"
+                />
+                <input
+                  type="text"
+                  value={element.fontColor}
+                  onChange={(e) => onUpdateElement(element.id, { fontColor: e.target.value })}
+                  className="flex-1 px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Link</label>
+              <div className="space-y-2">
+                <select
+                  value={element.link?.type || ''}
+                  onChange={(e) => {
+                    if (!e.target.value) {
+                      onUpdateElement(element.id, { link: undefined });
+                    } else {
+                      onUpdateElement(element.id, {
+                        link: {
+                          type: e.target.value as 'page' | 'url',
+                          target: '',
+                          openInNewTab: false,
+                        },
+                      });
+                    }
+                  }}
+                  className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="">No Link</option>
+                  <option value="page">Link to Page</option>
+                  <option value="url">Link to URL</option>
+                </select>
+
+                {element.link && (
+                  <>
+                    <input
+                      type="text"
+                      value={element.link.target}
+                      onChange={(e) =>
+                        onUpdateElement(element.id, {
+                          link: { ...element.link!, target: e.target.value },
+                        })
+                      }
+                      placeholder={element.link.type === 'page' ? 'Page ID' : 'https://example.com'}
+                      className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
+                    />
+                    <label className="flex items-center gap-2 text-sm text-slate-300">
+                      <input
+                        type="checkbox"
+                        checked={element.link.openInNewTab || false}
+                        onChange={(e) =>
+                          onUpdateElement(element.id, {
+                            link: { ...element.link!, openInNewTab: e.target.checked },
+                          })
+                        }
+                        className="rounded bg-slate-800 border-slate-600"
+                      />
+                      Open in new tab
+                    </label>
+                  </>
+                )}
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Padding</label>
+              <input
+                type="text"
+                value={element.styles?.padding || '8px 14px'}
+                onChange={(e) =>
+                  onUpdateElement(element.id, {
+                    styles: { ...element.styles, padding: e.target.value },
+                  })
+                }
+                placeholder="8px 14px"
+                className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Border Width (px)</label>
+              <input
+                type="number"
+                value={element.styles?.borderWidth || 2}
+                onChange={(e) =>
+                  onUpdateElement(element.id, {
+                    styles: { ...element.styles, borderWidth: parseInt(e.target.value) },
+                  })
+                }
+                className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Border Color</label>
+              <div className="flex gap-2">
+                <input
+                  type="color"
+                  value={element.styles?.borderColor || '#ffffff'}
+                  onChange={(e) =>
+                    onUpdateElement(element.id, {
+                      styles: { ...element.styles, borderColor: e.target.value },
+                    })
+                  }
+                  className="w-12 h-10 rounded cursor-pointer"
+                />
+                <input
+                  type="text"
+                  value={element.styles?.borderColor || '#ffffff'}
+                  onChange={(e) =>
+                    onUpdateElement(element.id, {
+                      styles: { ...element.styles, borderColor: e.target.value },
+                    })
+                  }
+                  className="flex-1 px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
+                />
+              </div>
+            </div>
+          </>
+        )}
+
+        {element.type !== 'text' && element.type !== 'button' && (
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">Link</label>
             <div className="space-y-2">
