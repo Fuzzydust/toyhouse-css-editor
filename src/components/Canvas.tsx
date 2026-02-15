@@ -337,7 +337,7 @@ export default function Canvas({
           height: project.canvasHeight,
           background: hasWorldImage ? 'transparent' : project.canvasBackground,
           backgroundImage: hasWorldImage ? `url(${worldElement.worldImage})` : undefined,
-          backgroundSize: 'cover',
+          backgroundSize: '100% 100%',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
         }}

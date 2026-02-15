@@ -1,15 +1,16 @@
 import { useState, useRef } from 'react';
-import { WorldLocation, CanvasElement } from '../types';
+import { WorldLocation, CanvasElement, Project } from '../types';
 import { Plus, Trash2, Link as LinkIcon, X, ArrowLeft } from 'lucide-react';
 
 interface WorldMakerProps {
   element: CanvasElement;
   onUpdateElement: (id: string, updates: Partial<CanvasElement>) => void;
+  onUpdateCanvas: (updates: Partial<Project>) => void;
   pages?: { id: string; name: string }[];
   onClose?: () => void;
 }
 
-export default function WorldMaker({ element, onUpdateElement, pages, onClose }: WorldMakerProps) {
+export default function WorldMaker({ element, onUpdateElement, onUpdateCanvas, pages, onClose }: WorldMakerProps) {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -76,6 +77,21 @@ export default function WorldMaker({ element, onUpdateElement, pages, onClose }:
     });
   };
 
+  const handleImageUrlChange = (url: string) => {
+    onUpdateElement(element.id, { worldImage: url });
+
+    if (url) {
+      const img = new Image();
+      img.onload = () => {
+        onUpdateCanvas({
+          canvasWidth: img.naturalWidth,
+          canvasHeight: img.naturalHeight,
+        });
+      };
+      img.src = url;
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-slate-900">
       <div className="bg-slate-800 border-b border-slate-700 px-6 py-4">
@@ -110,10 +126,11 @@ export default function WorldMaker({ element, onUpdateElement, pages, onClose }:
             <input
               type="text"
               value={element.worldImage || ''}
-              onChange={(e) => onUpdateElement(element.id, { worldImage: e.target.value })}
+              onChange={(e) => handleImageUrlChange(e.target.value)}
               placeholder="Enter image URL (e.g., https://example.com/map.jpg)"
               className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 text-base"
             />
+            <p className="text-xs text-slate-400 mt-2">Canvas will automatically resize to match image dimensions</p>
           </div>
 
           <div className="flex-1 overflow-auto p-4">

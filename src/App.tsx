@@ -206,6 +206,7 @@ function App() {
           <WorldMaker
             element={selectedElement}
             onUpdateElement={updateElement}
+            onUpdateCanvas={updateCanvasSettings}
             pages={project.pages?.map(p => ({ id: p.id, name: p.name })) || []}
             onClose={() => setWorldMakerMode(false)}
           />
