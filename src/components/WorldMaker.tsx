@@ -12,6 +12,7 @@ interface WorldMakerProps {
 
 export default function WorldMaker({ element, onUpdateElement, onUpdateCanvas, pages, onClose }: WorldMakerProps) {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
+  const [draggingLocationId, setDraggingLocationId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const locations = element.locations || [];
@@ -49,7 +50,33 @@ export default function WorldMaker({ element, onUpdateElement, onUpdateCanvas, p
 
   const handleLocationClick = (e: React.MouseEvent, locationId: string) => {
     e.stopPropagation();
+    if (!draggingLocationId) {
+      setSelectedLocationId(locationId);
+    }
+  };
+
+  const handleLocationMouseDown = (e: React.MouseEvent, locationId: string) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setDraggingLocationId(locationId);
     setSelectedLocationId(locationId);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (draggingLocationId && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+      updateLocation(draggingLocationId, {
+        x: Math.max(0, Math.min(100, x)),
+        y: Math.max(0, Math.min(100, y)),
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setDraggingLocationId(null);
   };
 
   const updateLocation = (locationId: string, updates: Partial<WorldLocation>) => {
@@ -108,7 +135,7 @@ export default function WorldMaker({ element, onUpdateElement, onUpdateCanvas, p
             )}
             <div>
               <h2 className="text-xl font-bold text-white">World Maker</h2>
-              <p className="text-sm text-slate-400">Create interactive locations on your world map</p>
+              <p className="text-sm text-slate-400">Click to add locations, drag to move them around</p>
             </div>
           </div>
           <div className="text-sm text-slate-400">
@@ -140,6 +167,9 @@ export default function WorldMaker({ element, onUpdateElement, onUpdateCanvas, p
                 ref={containerRef}
                 className="relative cursor-crosshair bg-slate-900 rounded-lg overflow-hidden shadow-xl"
                 onClick={handleContainerClick}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
                 style={{ minHeight: '600px' }}
               >
                 <img
@@ -152,14 +182,19 @@ export default function WorldMaker({ element, onUpdateElement, onUpdateCanvas, p
                 {locations.map((location) => (
                   <div
                     key={location.id}
-                    className={`absolute cursor-pointer transition-all ${
-                      selectedLocationId === location.id ? 'scale-110 z-20 ring-2 ring-teal-400' : 'z-10 hover:scale-105'
+                    className={`absolute transition-all ${
+                      draggingLocationId === location.id
+                        ? 'cursor-grabbing scale-110 z-30'
+                        : selectedLocationId === location.id
+                          ? 'cursor-grab scale-110 z-20 ring-2 ring-teal-400'
+                          : 'cursor-grab z-10 hover:scale-105'
                     }`}
                     style={{
                       left: `${location.x}%`,
                       top: `${location.y}%`,
                       transform: 'translate(-50%, -50%)',
                     }}
+                    onMouseDown={(e) => handleLocationMouseDown(e, location.id)}
                     onClick={(e) => handleLocationClick(e, location.id)}
                   >
                     <div
@@ -186,7 +221,7 @@ export default function WorldMaker({ element, onUpdateElement, onUpdateCanvas, p
                 <div>
                   <Plus size={64} className="mx-auto mb-4 opacity-50" />
                   <p className="text-lg font-medium">Enter an image URL above to start</p>
-                  <p className="text-sm mt-2">Then click on the image to add location markers</p>
+                  <p className="text-sm mt-2">Click to add locations, drag to move them</p>
                 </div>
               </div>
             )}
@@ -196,7 +231,7 @@ export default function WorldMaker({ element, onUpdateElement, onUpdateCanvas, p
         <div className="w-96 bg-slate-800 rounded-lg overflow-hidden flex flex-col">
           <div className="p-4 border-b border-slate-700">
             <h3 className="text-lg font-semibold text-white">Locations</h3>
-            <p className="text-xs text-slate-400 mt-1">Click on the image to add new locations</p>
+            <p className="text-xs text-slate-400 mt-1">Click to add locations, drag to move them</p>
           </div>
 
           <div className="flex-1 overflow-auto p-4">
@@ -205,7 +240,8 @@ export default function WorldMaker({ element, onUpdateElement, onUpdateCanvas, p
               <div className="text-center text-slate-400 py-12">
                 <LinkIcon size={48} className="mx-auto mb-4 opacity-50" />
                 <p className="text-base">No locations yet</p>
-                <p className="text-sm mt-2">Click on the image to add your first location</p>
+                <p className="text-sm mt-2">Click on the image to add locations</p>
+                <p className="text-xs mt-1">Drag markers to reposition them</p>
               </div>
             )}
 
