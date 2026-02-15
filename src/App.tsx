@@ -5,6 +5,7 @@ import Toolbar from './components/Toolbar';
 import PropertiesPanel from './components/PropertiesPanel';
 import CodeExportPanel from './components/CodeExportPanel';
 import LayersPanel from './components/LayersPanel';
+import WorldMaker from './components/WorldMaker';
 import { CanvasElement, Project, Page } from './types';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
   });
 
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
+  const [worldMakerMode, setWorldMakerMode] = useState(false);
   const [history, setHistory] = useState<Project[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const isUndoRedoAction = useRef(false);
@@ -199,43 +201,54 @@ function App() {
         canRedo={historyIndex < history.length - 1}
       />
 
-      <div className="flex-1 flex overflow-hidden">
-        <Toolbar onAddElement={addElement} />
+      {worldMakerMode && selectedElement?.type === 'world' ? (
+        <div className="flex-1 overflow-hidden">
+          <WorldMaker
+            element={selectedElement}
+            onUpdateElement={updateElement}
+            pages={project.pages?.map(p => ({ id: p.id, name: p.name })) || []}
+            onClose={() => setWorldMakerMode(false)}
+          />
+        </div>
+      ) : (
+        <div className="flex-1 flex overflow-hidden">
+          <Toolbar onAddElement={addElement} />
 
-        <main className="flex-1 flex flex-col overflow-hidden">
-          <Canvas
-            project={project}
+          <main className="flex-1 flex flex-col overflow-hidden">
+            <Canvas
+              project={project}
+              selectedElementId={selectedElementId}
+              onSelectElement={setSelectedElementId}
+              onUpdateElement={updateElement}
+            />
+          </main>
+
+          <LayersPanel
+            elements={project.elements}
             selectedElementId={selectedElementId}
             onSelectElement={setSelectedElementId}
             onUpdateElement={updateElement}
-          />
-        </main>
-
-        <LayersPanel
-          elements={project.elements}
-          selectedElementId={selectedElementId}
-          onSelectElement={setSelectedElementId}
-          onUpdateElement={updateElement}
-          onDeleteElement={deleteElement}
-          onReorderElement={reorderElement}
-        />
-
-        <div className="w-80 bg-slate-900 border-l border-slate-700 overflow-y-auto">
-          <PropertiesPanel
-            element={selectedElement}
-            onUpdateElement={updateElement}
             onDeleteElement={deleteElement}
-            canvasSettings={{
-              width: project.canvasWidth,
-              height: project.canvasHeight,
-              background: project.canvasBackground,
-            }}
-            onUpdateCanvas={updateCanvasSettings}
-            project={project}
+            onReorderElement={reorderElement}
           />
-          <CodeExportPanel project={project} />
+
+          <div className="w-80 bg-slate-900 border-l border-slate-700 overflow-y-auto">
+            <PropertiesPanel
+              element={selectedElement}
+              onUpdateElement={updateElement}
+              onDeleteElement={deleteElement}
+              canvasSettings={{
+                width: project.canvasWidth,
+                height: project.canvasHeight,
+                background: project.canvasBackground,
+              }}
+              onUpdateCanvas={updateCanvasSettings}
+              onEditWorld={() => setWorldMakerMode(true)}
+            />
+            <CodeExportPanel project={project} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

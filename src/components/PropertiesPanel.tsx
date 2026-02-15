@@ -1,7 +1,6 @@
 import { Trash2, Settings, Link, X } from 'lucide-react';
-import { CanvasElement, Project } from '../types';
+import { CanvasElement } from '../types';
 import { useState } from 'react';
-import WorldMaker from './WorldMaker';
 
 interface PropertiesPanelProps {
   element: CanvasElement | undefined;
@@ -13,7 +12,7 @@ interface PropertiesPanelProps {
     background: string;
   };
   onUpdateCanvas: (updates: any) => void;
-  project?: Project;
+  onEditWorld?: () => void;
 }
 
 const TOYHOUSE_FONTS = [
@@ -43,7 +42,7 @@ export default function PropertiesPanel({
   onDeleteElement,
   canvasSettings,
   onUpdateCanvas,
-  project,
+  onEditWorld,
 }: PropertiesPanelProps) {
   const [showImageLinkPopup, setShowImageLinkPopup] = useState(false);
   const [imageLink, setImageLink] = useState('');
@@ -100,14 +99,68 @@ export default function PropertiesPanel({
   }
 
   if (element.type === 'world') {
-    const pages = project?.pages?.map(p => ({ id: p.id, name: p.name })) || [];
     return (
-      <div className="h-full overflow-hidden">
-        <WorldMaker
-          element={element}
-          onUpdateElement={onUpdateElement}
-          pages={pages}
-        />
+      <div className="p-6 border-b border-slate-700">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-white">World Properties</h3>
+          <button
+            onClick={() => onDeleteElement(element.id)}
+            className="p-2 text-red-400 hover:bg-red-500/10 rounded transition-colors"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          <div className="p-4 bg-teal-500/10 border border-teal-500/30 rounded-lg">
+            <div className="flex items-start gap-3 mb-3">
+              <div className="text-2xl">🗺️</div>
+              <div className="flex-1">
+                <h4 className="font-medium text-teal-300 mb-1">Interactive World</h4>
+                <p className="text-sm text-slate-300">
+                  {element.locations?.length || 0} location{element.locations?.length !== 1 ? 's' : ''} added
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={onEditWorld}
+              className="w-full px-4 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-medium transition-colors"
+            >
+              Edit World Locations
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Width</label>
+              <input
+                type="number"
+                value={Math.round(element.width)}
+                onChange={(e) => onUpdateElement(element.id, { width: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Height</label>
+              <input
+                type="number"
+                value={Math.round(element.height)}
+                onChange={(e) => onUpdateElement(element.id, { height: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Z-Index</label>
+            <input
+              type="number"
+              value={element.zIndex}
+              onChange={(e) => onUpdateElement(element.id, { zIndex: parseInt(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-800 text-white rounded border border-slate-600 focus:border-blue-500 focus:outline-none"
+            />
+          </div>
+        </div>
       </div>
     );
   }

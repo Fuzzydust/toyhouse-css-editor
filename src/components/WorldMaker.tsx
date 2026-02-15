@@ -1,14 +1,15 @@
 import { useState, useRef } from 'react';
 import { WorldLocation, CanvasElement } from '../types';
-import { Plus, Trash2, Link as LinkIcon, Move, X } from 'lucide-react';
+import { Plus, Trash2, Link as LinkIcon, Move, X, ArrowLeft } from 'lucide-react';
 
 interface WorldMakerProps {
   element: CanvasElement;
   onUpdateElement: (id: string, updates: Partial<CanvasElement>) => void;
   pages?: { id: string; name: string }[];
+  onClose?: () => void;
 }
 
-export default function WorldMaker({ element, onUpdateElement, pages }: WorldMakerProps) {
+export default function WorldMaker({ element, onUpdateElement, pages, onClose }: WorldMakerProps) {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -98,99 +99,136 @@ export default function WorldMaker({ element, onUpdateElement, pages }: WorldMak
   };
 
   return (
-    <div className="flex gap-4 h-full">
-      <div className="flex-1 bg-slate-800 rounded-lg p-4 overflow-auto">
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-slate-300 mb-2">
-            Background Image URL
-          </label>
-          <input
-            type="text"
-            value={element.worldImage || ''}
-            onChange={(e) => onUpdateElement(element.id, { worldImage: e.target.value })}
-            placeholder="Enter image URL"
-            className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        {element.worldImage && (
-          <div
-            ref={containerRef}
-            className="relative cursor-crosshair bg-slate-900 rounded-lg overflow-hidden"
-            onClick={handleContainerClick}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            style={{ minHeight: '400px' }}
-          >
-            <img
-              src={element.worldImage}
-              alt="World background"
-              className="w-full h-auto block pointer-events-none select-none"
-              draggable={false}
-            />
-
-            {locations.map((location) => (
-              <div
-                key={location.id}
-                className={`absolute cursor-move transition-transform ${
-                  selectedLocationId === location.id ? 'scale-110 z-20' : 'z-10'
-                }`}
-                style={{
-                  left: `${location.x}%`,
-                  top: `${location.y}%`,
-                  transform: 'translate(-50%, -50%)',
-                }}
-                onMouseDown={(e) => handleLocationMouseDown(e, location.id)}
+    <div className="flex flex-col h-full bg-slate-900">
+      <div className="bg-slate-800 border-b border-slate-700 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="flex items-center gap-2 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
               >
-                <div
-                  className="whitespace-nowrap select-none flex items-center gap-2"
-                  style={{
-                    backgroundColor: location.buttonStyles?.backgroundColor || '#1a1a1a',
-                    color: location.buttonStyles?.color || '#ffffff',
-                    border: `${location.buttonStyles?.borderWidth || 2}px solid ${location.buttonStyles?.borderColor || '#ffffff'}`,
-                    borderRadius: `${location.buttonStyles?.borderRadius || 8}px`,
-                    padding: location.buttonStyles?.padding || '8px 14px',
-                    fontSize: location.buttonStyles?.fontSize || '14px',
-                    fontWeight: location.buttonStyles?.fontWeight || 'bold',
-                  }}
-                >
-                  <Move size={12} />
-                  {location.name}
-                </div>
-              </div>
-            ))}
+                <ArrowLeft size={18} />
+                Back to Canvas
+              </button>
+            )}
+            <div>
+              <h2 className="text-xl font-bold text-white">World Maker</h2>
+              <p className="text-sm text-slate-400">Create interactive locations on your world map</p>
+            </div>
           </div>
-        )}
-
-        {!element.worldImage && (
-          <div className="bg-slate-900 rounded-lg p-12 text-center text-slate-400">
-            <Plus size={48} className="mx-auto mb-4 opacity-50" />
-            <p>Enter an image URL above to start creating your world</p>
+          <div className="text-sm text-slate-400">
+            {locations.length} location{locations.length !== 1 ? 's' : ''}
           </div>
-        )}
+        </div>
       </div>
 
-      <div className="w-80 bg-slate-800 rounded-lg p-4 overflow-auto">
-        <h3 className="text-lg font-semibold text-white mb-4">Locations</h3>
-
-        {locations.length === 0 && (
-          <div className="text-center text-slate-400 py-8">
-            <p className="text-sm">Click on the image to add locations</p>
+      <div className="flex-1 flex gap-6 p-6 overflow-hidden">
+        <div className="flex-1 flex flex-col bg-slate-800 rounded-lg overflow-hidden">
+          <div className="p-4 border-b border-slate-700">
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Background Image URL
+            </label>
+            <input
+              type="text"
+              value={element.worldImage || ''}
+              onChange={(e) => onUpdateElement(element.id, { worldImage: e.target.value })}
+              placeholder="Enter image URL (e.g., https://example.com/map.jpg)"
+              className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 text-base"
+            />
           </div>
-        )}
 
-        {selectedLocation && (
-          <div className="space-y-4 border-t border-slate-700 pt-4">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="font-medium text-white">Edit Location</h4>
-              <button
-                onClick={() => setSelectedLocationId(null)}
-                className="p-1 hover:bg-slate-700 rounded"
+          <div className="flex-1 overflow-auto p-4">
+
+            {element.worldImage && (
+              <div
+                ref={containerRef}
+                className="relative cursor-crosshair bg-slate-900 rounded-lg overflow-hidden shadow-xl"
+                onClick={handleContainerClick}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                style={{ minHeight: '600px' }}
               >
-                <X size={16} className="text-slate-400" />
-              </button>
-            </div>
+                <img
+                  src={element.worldImage}
+                  alt="World background"
+                  className="w-full h-auto block pointer-events-none select-none"
+                  draggable={false}
+                />
+
+                {locations.map((location) => (
+                  <div
+                    key={location.id}
+                    className={`absolute cursor-move transition-transform ${
+                      selectedLocationId === location.id ? 'scale-110 z-20' : 'z-10'
+                    }`}
+                    style={{
+                      left: `${location.x}%`,
+                      top: `${location.y}%`,
+                      transform: 'translate(-50%, -50%)',
+                    }}
+                    onMouseDown={(e) => handleLocationMouseDown(e, location.id)}
+                  >
+                    <div
+                      className="whitespace-nowrap select-none flex items-center gap-2 shadow-lg"
+                      style={{
+                        backgroundColor: location.buttonStyles?.backgroundColor || '#1a1a1a',
+                        color: location.buttonStyles?.color || '#ffffff',
+                        border: `${location.buttonStyles?.borderWidth || 2}px solid ${location.buttonStyles?.borderColor || '#ffffff'}`,
+                        borderRadius: `${location.buttonStyles?.borderRadius || 8}px`,
+                        padding: location.buttonStyles?.padding || '8px 14px',
+                        fontSize: location.buttonStyles?.fontSize || '14px',
+                        fontWeight: location.buttonStyles?.fontWeight || 'bold',
+                      }}
+                    >
+                      <Move size={12} />
+                      {location.name}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {!element.worldImage && (
+              <div className="bg-slate-900 rounded-lg p-12 text-center text-slate-400 flex-1 flex items-center justify-center">
+                <div>
+                  <Plus size={64} className="mx-auto mb-4 opacity-50" />
+                  <p className="text-lg font-medium">Enter an image URL above to start</p>
+                  <p className="text-sm mt-2">Then click on the image to add location markers</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="w-96 bg-slate-800 rounded-lg overflow-hidden flex flex-col">
+          <div className="p-4 border-b border-slate-700">
+            <h3 className="text-lg font-semibold text-white">Locations</h3>
+            <p className="text-xs text-slate-400 mt-1">Click on the image to add new locations</p>
+          </div>
+
+          <div className="flex-1 overflow-auto p-4">
+
+            {locations.length === 0 && (
+              <div className="text-center text-slate-400 py-12">
+                <LinkIcon size={48} className="mx-auto mb-4 opacity-50" />
+                <p className="text-base">No locations yet</p>
+                <p className="text-sm mt-2">Click on the image to add your first location</p>
+              </div>
+            )}
+
+            {selectedLocation && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="font-semibold text-white text-base">Edit Location</h4>
+                  <button
+                    onClick={() => setSelectedLocationId(null)}
+                    className="p-1.5 hover:bg-slate-700 rounded"
+                  >
+                    <X size={18} className="text-slate-400" />
+                  </button>
+                </div>
 
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
@@ -340,35 +378,37 @@ export default function WorldMaker({ element, onUpdateElement, pages }: WorldMak
               </div>
             </div>
 
-            <button
-              onClick={() => deleteLocation(selectedLocation.id)}
-              className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center justify-center gap-2 transition-colors"
-            >
-              <Trash2 size={16} />
-              Delete Location
-            </button>
-          </div>
-        )}
+                <button
+                  onClick={() => deleteLocation(selectedLocation.id)}
+                  className="w-full px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center justify-center gap-2 transition-colors font-medium"
+                >
+                  <Trash2 size={18} />
+                  Delete Location
+                </button>
+              </div>
+            )}
 
-        {!selectedLocation && locations.length > 0 && (
-          <div className="space-y-2">
-            {locations.map((location) => (
-              <button
-                key={location.id}
-                onClick={() => setSelectedLocationId(location.id)}
-                className="w-full px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded text-left flex items-center justify-between transition-colors"
-              >
-                <span className="flex items-center gap-2">
-                  <LinkIcon size={14} />
-                  {location.name}
-                </span>
-                <span className="text-xs text-slate-400">
-                  {Math.round(location.x)}%, {Math.round(location.y)}%
-                </span>
-              </button>
-            ))}
+            {!selectedLocation && locations.length > 0 && (
+              <div className="space-y-2">
+                {locations.map((location) => (
+                  <button
+                    key={location.id}
+                    onClick={() => setSelectedLocationId(location.id)}
+                    className="w-full px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-left flex items-center justify-between transition-colors"
+                  >
+                    <span className="flex items-center gap-2 flex-1 min-w-0">
+                      <LinkIcon size={16} className="flex-shrink-0" />
+                      <span className="truncate">{location.name}</span>
+                    </span>
+                    <span className="text-xs text-slate-400 ml-2 flex-shrink-0">
+                      {Math.round(location.x)}%, {Math.round(location.y)}%
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
