@@ -201,6 +201,7 @@ export default function Canvas({
       top: element.y,
       width: element.width,
       height: element.height,
+      zIndex: element.zIndex,
       transform: `rotate(${element.rotation}deg)`,
       cursor: isLocked ? 'not-allowed' : 'move',
       pointerEvents: 'auto',
